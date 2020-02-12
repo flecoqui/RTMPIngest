@@ -114,6 +114,7 @@ log "nginx_rtmp built"
 #############################################################################
 build_ffmpeg(){
 # install pre-requisites
+apt-get -y update
 apt-get -y install build-essential curl g++
 # Download source code
 cd /git
@@ -153,8 +154,8 @@ cat <<EOF > /testrtmp/ffmpegloop.sh
 while [ : ]
 do
 folder=$(date  +"%F-%X.%S")
-mkdir /temp/$folder
-/usr/bin/ffmpeg -f flv -i rtmp://10.0.1.4:1935/$1 -c copy -flags +global_header -f segment -segment_time 60 -segment_format_options movflags=+faststart -reset_timestamps 1 -strftime 1 "/temp/$folder/%Y-%m-%d_%H-%M-%S_chunk.mp4" 
+mkdir /temp/\$folder
+/usr/bin/ffmpeg -f flv -i rtmp://127.0.0.1:1935/$1 -c copy -flags +global_header -f segment -segment_time 60 -segment_format_options movflags=+faststart -reset_timestamps 1 -strftime 1 "/temp/\$folder/%Y-%m-%d_%H-%M-%S_chunk.mp4" 
 sleep 5
 done
 EOF
@@ -283,6 +284,7 @@ rtmp {
             # exec_push ffmpeg -f flv -i rtmp://10.0.1.4:1935/live/stream -c copy -flags +global_header -f segment -segment_time 60 -segment_format_options movflags=+faststart -reset_timestamps 1 /temp/testnginx%d.mp4  >> /temp/ffmpeg.log ;
         }
     }
+}
 EOF
 
 }
@@ -309,7 +311,7 @@ log "Environment before installation: $environ"
 log "Installation script start : $(date)"
 log "Net Core Installation: $(date)"
 log "#####  azure_hostname: $azure_hostname"
-log "#####  rtmp_path: $artmp_path"
+log "#####  rtmp_path: $rtmp_path"
 log "#####  storage_account: $storage_account_prefix"
 log "#####  storage_key: $storage_sas_token"
 log "Installation script start : $(date)"

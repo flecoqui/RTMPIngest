@@ -168,6 +168,7 @@
     },
     "configurationSize": "[variables(concat('configurationSize', parameters('vmSize')))]",
     "apiVersion": "2015-06-15",
+    "apiStorageVersion": "2019-04-01",
     "storageAccountNamePrefix": "[toLower(substring(concat(parameters('namePrefix'), uniqueString(resourceGroup().id)), 0, 8))]",
     "storageAccountName": "[concat(variables('storageAccountNamePrefix'), uniqueString(concat(resourceGroup().id, variables('storageAccountNamePrefix'))),'sa')]",
     "storageAccountType": "Standard_LRS",
@@ -197,7 +198,7 @@
     {
       "type": "Microsoft.Storage/storageAccounts",
       "name": "[variables('storageAccountName')]",
-      "apiVersion": "[variables('apiVersion')]",
+      "apiVersion": "[variables('apiStorageVersion')]",
       "location": "[resourceGroup().location]",
       "properties": {
         "accountType": "[variables('storageAccountType')]"
@@ -205,7 +206,7 @@
       "resources": [
         {
             "type": "blobServices/containers",
-            "apiVersion": "2019-04-01",
+            "apiVersion": "[variables('apiStorageVersion')]",
             "name": "[concat('default/', variables('containerName'))]",
             "dependsOn": [
                 "[variables('storageAccountName')]"
@@ -252,30 +253,16 @@
             }
           },
           {
-            "name": "winrm1",
+            "name": "rtmp",
             "properties": {
-              "description": "WINRM1 port",
+              "description": "rtmp port",
               "protocol": "Tcp",
               "sourcePortRange": "*",
-              "destinationPortRange": "5985",
+              "destinationPortRange": "1935",
               "sourceAddressPrefix": "Internet",
               "destinationAddressPrefix": "*",
               "access": "Allow",
               "priority": 102,
-              "direction": "Inbound"
-            }
-          },
-          {
-            "name": "winrm2",
-            "properties": {
-              "description": "WINRM2 port",
-              "protocol": "Tcp",
-              "sourcePortRange": "*",
-              "destinationPortRange": "5986",
-              "sourceAddressPrefix": "Internet",
-              "destinationAddressPrefix": "*",
-              "access": "Allow",
-              "priority": 103,
               "direction": "Inbound"
             }
           },
@@ -290,34 +277,6 @@
               "destinationAddressPrefix": "*",
               "access": "Allow",
               "priority": 104,
-              "direction": "Inbound"
-            }
-          },
-          {
-            "name": "iperf3-udp",
-            "properties": {
-              "description": "iperf3 udp port",
-              "protocol": "Udp",
-              "sourcePortRange": "*",
-              "destinationPortRange": "5201",
-              "sourceAddressPrefix": "Internet",
-              "destinationAddressPrefix": "*",
-              "access": "Allow",
-              "priority": 110,
-              "direction": "Inbound"
-            }
-          },
-          {
-            "name": "iperf3-tcp",
-            "properties": {
-              "description": "iperf3 tcp port",
-              "protocol": "Tcp",
-              "sourcePortRange": "*",
-              "destinationPortRange": "5201",
-              "sourceAddressPrefix": "Internet",
-              "destinationAddressPrefix": "*",
-              "access": "Allow",
-              "priority": 111,
               "direction": "Inbound"
             }
           }
@@ -469,7 +428,7 @@
               "fileUris": [
                 "[variables('configurationOS')[parameters('vmOS')].installScriptUrl]"
               ],
-              "commandToExecute": "[concat(variables('configurationOS')[parameters('vmOS')].commandToExecute, ' \"live/stream\" ','\"https://',variables('storageAccountName'),'.blob.core.windows.net/', variables('containerName'),'?\"  \"', listAccountSas(variables('storageAccountName'), '2018-07-01', variables('accountSasProperties')).accountSasToken, '\"')]"
+              "commandToExecute": "[concat(variables('configurationOS')[parameters('vmOS')].commandToExecute, ' \"live/stream\" ','\"https://',variables('storageAccountName'),'.blob.core.windows.net/', variables('containerName'),'/\"  \"?', listAccountSas(variables('storageAccountName'), variables('apiStorageVersion'), variables('accountSasProperties')).accountSasToken, '\"')]"
             }
           }
         }
@@ -483,11 +442,15 @@
     },
     "storageKey": {
       "type": "string",
-      "value": "[listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName')),'2015-05-01-preview').key1]"
+      "value": "[listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName')),variables('apiStorageVersion')).key1]"
     },
     "storageSasToken": {
       "type": "string",
-      "value": "[listAccountSas(variables('storageAccountName'), '2018-07-01', variables('accountSasProperties')).accountSasToken]"
+      "value": "[listAccountSas(variables('storageAccountName'), variables('apiStorageVersion'), variables('accountSasProperties')).accountSasToken]"
+    },
+    "httpCmd": {
+      "type": "string",
+      "value": "[concat('http://',variables('vmName'),'.', resourceGroup().location, '.cloudapp.azure.com')]"
     },
     "ffmpegCmd": {
       "type": "string",
