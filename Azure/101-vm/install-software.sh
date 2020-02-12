@@ -88,11 +88,15 @@ yum -y install git
 
 
 #############################################################################
-build_ngix_rtmp(){
+build_nginx_rtmp(){
 # install pre-requisites
 apt-get -y install build-essential curl g++
 # Download source code
 cd /git
+apt-get -y update
+apt-get -y install libpcre3 libpcre3-dev
+apt-get -y install libssl-dev
+apt-get -y install zlib1g-dev
 #git clone https://github.com/nginx/nginx.git
 wget http://nginx.org/download/nginx-1.16.1.tar.gz
 tar xvfz nginx-1.16.1.tar.gz
@@ -184,18 +188,18 @@ do
 for mp in /temp/**/*.mp4
 do
 echo "......"
-        echo "$mp"
-#echo "$sastoken"
-#echo "$prefixuri"
-#echo azcopy cp "$mp" "$prefixuri$mp$sastoken"
-lsof | grep $mp
-if [ ! ${?} -eq 0 ];
+        echo "\$mp"
+#echo "\$sastoken"
+#echo "\$prefixuri"
+#echo azcopy cp "\$mp" "\$prefixuri\$mp\$sastoken"
+lsof | grep \$mp
+if [ ! \${?} -eq 0 ];
 then
-        echo copying "$mp"
-        azcopy cp "$mp" "$prefixuri$mp$sastoken"
-        rm -f "$mp"
+        echo copying "\$mp"
+        azcopy cp "\$mp" "\$prefixuri\$mp\$sastoken"
+        rm -f "\$mp"
 else
-        echo in process "$mp"
+        echo in process "\$mp"
 fi
 done
 sleep 60

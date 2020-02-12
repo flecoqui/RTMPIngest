@@ -469,7 +469,7 @@
               "fileUris": [
                 "[variables('configurationOS')[parameters('vmOS')].installScriptUrl]"
               ],
-              "commandToExecute": "[concat(variables('configurationOS')[parameters('vmOS')].commandToExecute, ' live/stream ','https://',variables('storageAccountName'),'.blob.core.windows.net/', variables('containerName'),'? ', listAccountSas(variables('storageAccountName'), '2018-07-01', variables('accountSasProperties')).accountSasToken)]"
+              "commandToExecute": "[concat(variables('configurationOS')[parameters('vmOS')].commandToExecute, ' \"live/stream\" ','\"https://',variables('storageAccountName'),'.blob.core.windows.net/', variables('containerName'),'?\"  \"', listAccountSas(variables('storageAccountName'), '2018-07-01', variables('accountSasProperties')).accountSasToken, '\"')]"
             }
           }
         }
