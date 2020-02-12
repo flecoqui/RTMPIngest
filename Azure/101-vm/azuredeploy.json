@@ -176,13 +176,11 @@
     "dataDisk1VhdName": "[concat(parameters('namePrefix'), 'datadisk')]",
     "networkSecurityGroupName": "[concat(parameters('namePrefix'), 'nsg')]",
     "accountSasProperties": {
-      "type": "object",
-      "defaultValue": {
-          "signedServices": "b",
-          "signedPermission": "rwdlacu",
+          "signedServices": "bfqt",
+          "signedPermission": "rwdlacup",
+          "signedStart": "2020-01-01T00:00:00Z",
           "signedExpiry": "2023-03-01T00:00:01Z",
-          "signedResourceTypes": "co"
-      }
+          "signedResourceTypes": "sco"
     },
     "nicName": "[concat(parameters('namePrefix'), 'nic')]",
     "addressPrefix": "10.0.0.0/16",
@@ -471,14 +469,12 @@
               "fileUris": [
                 "[variables('configurationOS')[parameters('vmOS')].installScriptUrl]"
               ],
-              "commandToExecute": "[concat(variables('configurationOS')[parameters('vmOS')].commandToExecute), ' live/stream ', 'https://',variables('storageAccountName'),'.blob.core.windows.net/', variables('containerName'),' ', listAccountSas(parameters('storageAccountName'), '2018-07-01', variables('accountSasProperties')).accountSasToken]"
+              "commandToExecute": "[concat(variables('configurationOS')[parameters('vmOS')].commandToExecute, ' live/stream ','https://',variables('storageAccountName'),'.blob.core.windows.net/', variables('containerName'),'? ', listAccountSas(variables('storageAccountName'), '2018-07-01', variables('accountSasProperties')).accountSasToken)]"
             }
           }
         }
       ]
     }
-
-
   ],
   "outputs": {
     "storageAccount": {
@@ -491,7 +487,7 @@
     },
     "storageSasToken": {
       "type": "string",
-      "value": "[listAccountSas(parameters('storageAccountName'), '2018-07-01', variables('accountSasProperties')).accountSasToken]"
+      "value": "[listAccountSas(variables('storageAccountName'), '2018-07-01', variables('accountSasProperties')).accountSasToken]"
     },
     "ffmpegCmd": {
       "type": "string",
