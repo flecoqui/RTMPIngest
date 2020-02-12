@@ -168,7 +168,7 @@
     },
     "configurationSize": "[variables(concat('configurationSize', parameters('vmSize')))]",
     "apiVersion": "2015-06-15",
-    "apiStorageVersion": "2019-04-01",
+    "apiStorageVersion": "2018-07-01",
     "storageAccountNamePrefix": "[toLower(substring(concat(parameters('namePrefix'), uniqueString(resourceGroup().id)), 0, 8))]",
     "storageAccountName": "[concat(variables('storageAccountNamePrefix'), uniqueString(concat(resourceGroup().id, variables('storageAccountNamePrefix'))),'sa')]",
     "storageAccountType": "Standard_LRS",
@@ -181,7 +181,9 @@
           "signedPermission": "rwdlacup",
           "signedStart": "2020-01-01T00:00:00Z",
           "signedExpiry": "2023-03-01T00:00:01Z",
-          "signedResourceTypes": "sco"
+          "signedResourceTypes": "sco",
+          "signedVersion": "2019-02-02",
+          "SignedProtocol": "https"
     },
     "nicName": "[concat(parameters('namePrefix'), 'nic')]",
     "addressPrefix": "10.0.0.0/16",
@@ -198,7 +200,7 @@
     {
       "type": "Microsoft.Storage/storageAccounts",
       "name": "[variables('storageAccountName')]",
-      "apiVersion": "[variables('apiStorageVersion')]",
+      "apiVersion": "[variables('apiVersion')]",
       "location": "[resourceGroup().location]",
       "properties": {
         "accountType": "[variables('storageAccountType')]"
@@ -428,7 +430,7 @@
               "fileUris": [
                 "[variables('configurationOS')[parameters('vmOS')].installScriptUrl]"
               ],
-              "commandToExecute": "[concat(variables('configurationOS')[parameters('vmOS')].commandToExecute, ' \"live/stream\" ','\"https://',variables('storageAccountName'),'.blob.core.windows.net/', variables('containerName'),'/\"  \"?', listAccountSas(variables('storageAccountName'), variables('apiStorageVersion'), variables('accountSasProperties')).accountSasToken, '\"')]"
+              "commandToExecute": "[concat(variables('configurationOS')[parameters('vmOS')].commandToExecute, ' \"live/stream\" ','\"https://',variables('storageAccountName'),'.blob.core.windows.net/', variables('containerName'),'\"  \"?', listAccountSas(variables('storageAccountName'), variables('apiStorageVersion'), variables('accountSasProperties')).accountSasToken, '\"')]"
             }
           }
         }
@@ -442,7 +444,7 @@
     },
     "storageKey": {
       "type": "string",
-      "value": "[listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName')),variables('apiStorageVersion')).key1]"
+      "value": "[listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName')),variables('apiStorageVersion')).keys[0].value]"
     },
     "storageSasToken": {
       "type": "string",

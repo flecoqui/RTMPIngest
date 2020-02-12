@@ -182,17 +182,18 @@ EOF
 #############################################################################
 install_azcopy(){
 cat <<EOF > /testrtmp/azcopyloop.sh
-prefixuri=$1
-sastoken=$2
+prefixuri='\$1'
+sastoken="\$2"
 while [ : ]
 do
 for mp in /temp/**/*.mp4
 do
-echo "......"
-        echo "\$mp"
-#echo "\$sastoken"
-#echo "\$prefixuri"
-#echo azcopy cp "\$mp" "\$prefixuri\$mp\$sastoken"
+if [ $mp != '/temp/**/*.mp4' ];
+then
+echo Processing file: "\$mp"
+#echo Token: "\$sastoken"
+#echo Url: "\$prefixuri"
+echo azcopy cp "\$mp" "\$prefixuri\$mp\$sastoken"
 lsof | grep \$mp
 if [ ! \${?} -eq 0 ];
 then
@@ -201,6 +202,7 @@ then
         rm -f "\$mp"
 else
         echo in process "\$mp"
+fi
 fi
 done
 sleep 60
