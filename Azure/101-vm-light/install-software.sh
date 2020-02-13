@@ -90,11 +90,22 @@ yum -y install git
 
 #############################################################################
 install_nginx_rtmp(){
+# install pre-requisites
+apt-get -y install build-essential curl g++
+# Download source code
+cd /git
 apt-get -y update
-apt-get -y install ginx
-apt-get -y install libnginx-mod-rtmp
-systemctl stop nginx
-systemctl start nginx
+apt-get -y install libpcre3 libpcre3-dev
+apt-get -y install libssl-dev
+apt-get -y install zlib1g-dev
+#git clone https://github.com/nginx/nginx.git
+wget http://nginx.org/download/nginx-1.16.1.tar.gz
+tar xvfz nginx-1.16.1.tar.gz
+git clone https://github.com/arut/nginx-rtmp-module.git 
+cd nginx-1.16.1
+./configure --add-module=/git/nginx-rtmp-module
+make
+make install
 
 log "nginx_rtmp installed"
 
