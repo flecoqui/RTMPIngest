@@ -12,6 +12,9 @@ This template allows you to deploy from Github a Live RTMP Ingester hosted on Az
 
 
 
+![](https://raw.githubusercontent.com/flecoqui/RTMPIngest/master/Azure/101-vm/Docs/1-architecture.png)
+
+
 
 # DEPLOYING THE REST API ON AZURE SERVICES
 
@@ -58,17 +61,31 @@ When you deploy the service you can define the following parameters:</p>
 * **vmAdminPassword:** VM password by default "VMP@ssw0rd"</p>
 * **vmOS:** supported values "debian","ubuntu","centos","redhat","windowsserver2016"by default "debian"</p>
 * **vmSize:** supported values"Small" (Standard_D2s_v3),"Medium" (Standard_D4s_v3),"Large" (Standard_D8s_v3),"XLarge" (Standard_D16s_v3) by default "Small"</p>
+* **containerName:** the name of the container on the Azure Storage where the audio/video chunks will be recorded, by default "rtmpcontainer"</p>
+* **expiryDate:** the expiry date of the SAS Token used to access the content stored in the container. by default "2030-01-01T00:00:01Z"</p>
 
 
 # TEST THE SERVICES:
 
 ## TEST THE SERVICES WITH FFMPEG
 Once the services are deployed, you can test the RTMP Ingester using ffmpeg on a PC running Windows 10. You can download ffmpeg from here https://www.ffmpeg.org/download.html  
+When the resources associated with the current ARM template are deployed, the ffmpegCmd output parameter contains the ffmpeg command line to feed the new virtual machine with a live RTMP stream using the following URL: 
+            
+            rtmp://vmName.region.cloudapp.azure.com:1935/rtmpPath
+
+
 For instance :
 
      ffmpeg.exe -v verbose -f dshow -i video="Integrated Webcam":audio="Microphone (Realtek(R) Audio)"  -video_size 1280x720 -strict -2 -c:a aac -b:a 192k -ar 44100 -r 30 -g 60 -keyint_min 60 -b:v 2000000 -c:v libx264 -preset veryfast  -profile main -level 3.0 -pix_fmt yuv420p -bufsize 1800k -maxrate 400k    -f flv rtmp://RTMPIngesterIPAddress:1935/live/stream
 
 </p>
+
+
+![](https://raw.githubusercontent.com/flecoqui/RTMPIngest/master/Azure/101-vm/Docs/ffmpeg.png)
+
+After one minute of streaming, the audio/video chunks are copied in the Azure Storage Container. You can display the content of this container if you open the output parameter containerUrl with your favorite browser.
+
+![](https://raw.githubusercontent.com/flecoqui/RTMPIngest/master/Azure/101-vm/Docs/container.png)
 
 
 ## DELETE THE RESOURCE GROUP:
