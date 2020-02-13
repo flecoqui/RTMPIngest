@@ -182,13 +182,13 @@ EOF
 #############################################################################
 install_azcopy(){
 cat <<EOF > /testrtmp/azcopyloop.sh
-prefixuri='\$1'
-sastoken="\$2"
+prefixuri='$1'
+sastoken="$2"
 while [ : ]
 do
 for mp in /temp/**/*.mp4
 do
-if [ $mp != '/temp/**/*.mp4' ];
+if [ \$mp != '/temp/**/*.mp4' ];
 then
 echo Processing file: "\$mp"
 #echo Token: "\$sastoken"

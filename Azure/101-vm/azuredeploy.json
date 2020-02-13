@@ -48,6 +48,20 @@
       "metadata": {
         "description": "Configuration Size: VM Size + Disk Size"
       }
+    },
+    "rtmpPath": {
+      "type": "string",
+      "defaultValue": "live/stream",
+      "metadata": {
+        "description": "RTMP path associated with the live service"
+      }
+    },
+    "containerName": {
+      "type": "string",
+      "defaultValue": "rtmpcontainer",
+      "metadata": {
+        "description": "Container Name where the audio/video chunks are stored"
+      }
     }
   },
   "variables": {
@@ -176,14 +190,11 @@
     "OSDiskName": "osdisksimplevm",
     "dataDisk1VhdName": "[concat(parameters('namePrefix'), 'datadisk')]",
     "networkSecurityGroupName": "[concat(parameters('namePrefix'), 'nsg')]",
-    "accountSasProperties": {
-          "signedServices": "bfqt",
-          "signedPermission": "rwdlacup",
-          "signedStart": "2020-01-01T00:00:00Z",
-          "signedExpiry": "2023-03-01T00:00:01Z",
-          "signedResourceTypes": "sco",
-          "signedVersion": "2019-02-02",
-          "SignedProtocol": "https"
+    "serviceSasFunctionValues": {
+      "canonicalizedResource": "[concat('/blob/', variables('storageAccountName'), '/', parameters('containerName'))]",
+      "signedResource": "c",
+      "signedPermission": "cw",
+      "signedExpiry": "2050-01-01T00:00:00Z"
     },
     "nicName": "[concat(parameters('namePrefix'), 'nic')]",
     "addressPrefix": "10.0.0.0/16",
@@ -193,14 +204,13 @@
     "publicIPAddressType": "Dynamic",
     "virtualNetworkName": "[concat(parameters('namePrefix'), 'vnet')]",
     "vnetID": "[resourceId('Microsoft.Network/virtualNetworks',variables('virtualNetworkName'))]",
-    "subnetRef": "[concat(variables('vnetID'),'/subnets/',variables('subnetName'))]",
-    "containerName": "testrtmp"
+    "subnetRef": "[concat(variables('vnetID'),'/subnets/',variables('subnetName'))]"
   },
   "resources": [
     {
       "type": "Microsoft.Storage/storageAccounts",
       "name": "[variables('storageAccountName')]",
-      "apiVersion": "[variables('apiVersion')]",
+      "apiVersion": "2018-02-01",
       "location": "[resourceGroup().location]",
       "properties": {
         "accountType": "[variables('storageAccountType')]"
@@ -209,7 +219,7 @@
         {
             "type": "blobServices/containers",
             "apiVersion": "[variables('apiStorageVersion')]",
-            "name": "[concat('default/', variables('containerName'))]",
+            "name": "[concat('default/', parameters('containerName'))]",
             "dependsOn": [
                 "[variables('storageAccountName')]"
             ],
@@ -430,7 +440,7 @@
               "fileUris": [
                 "[variables('configurationOS')[parameters('vmOS')].installScriptUrl]"
               ],
-              "commandToExecute": "[concat(variables('configurationOS')[parameters('vmOS')].commandToExecute, ' \"live/stream\" ','\"https://',variables('storageAccountName'),'.blob.core.windows.net/', variables('containerName'),'\"  \"?', listAccountSas(variables('storageAccountName'), variables('apiStorageVersion'), variables('accountSasProperties')).accountSasToken, '\"')]"
+              "commandToExecute": "[concat(variables('configurationOS')[parameters('vmOS')].commandToExecute, ' \"', parameters('rtmpPath'),'\" \"https://',variables('storageAccountName'),'.blob.core.windows.net/', parameters('containerName'),'\"  \"?', listServiceSas(variables('storageAccountName'), '2018-02-01', variables('serviceSasFunctionValues)).serviceSasToken, '\"')]"
             }
           }
         }
@@ -440,7 +450,7 @@
   "outputs": {
     "storageAccount": {
       "type": "string",
-      "value": "[concat('https://',variables('storageAccountName'),'.blob.core.windows.net/', variables('containerName'))]"
+      "value": "[concat('https://',variables('storageAccountName'),'.blob.core.windows.net/', parameters('containerName'))]"
     },
     "storageKey": {
       "type": "string",
@@ -456,7 +466,7 @@
     },
     "ffmpegCmd": {
       "type": "string",
-      "value": "[concat('ffmpeg.exe -v verbose -f dshow -i video=\"Integrated Webcam\":audio=\"Microphone (Realtek(R) Audio)\"  -video_size 1280x720 -strict -2 -c:a aac -b:a 192k -ar 44100 -r 30 -g 60 -keyint_min 60 -b:v 2000000 -c:v libx264 -preset veryfast  -profile main -level 3.0 -pix_fmt yuv420p -bufsize 1800k -maxrate 400k  -f flv rtmp://',variables('vmName'),'.', resourceGroup().location, '.cloudapp.azure.com:1935/live/stream')]"
+      "value": "[concat('ffmpeg.exe -v verbose -f dshow -i video=\"Integrated Webcam\":audio=\"Microphone (Realtek(R) Audio)\"  -video_size 1280x720 -strict -2 -c:a aac -b:a 192k -ar 44100 -r 30 -g 60 -keyint_min 60 -b:v 2000000 -c:v libx264 -preset veryfast  -profile main -level 3.0 -pix_fmt yuv420p -bufsize 1800k -maxrate 400k  -f flv rtmp://',variables('vmName'),'.', resourceGroup().location, '.cloudapp.azure.com:1935/',  parameters('rtmpPath'))]"
     }
   }
 }

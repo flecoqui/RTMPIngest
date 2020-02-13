@@ -16,6 +16,12 @@
     },
     "vmSize": {
       "value": "Small"
+    },
+    "rtmpPath": {
+      "value": "live/stream"
+    },
+    "containerName": {
+      "value": "live/stream"
     }
   }
 }
