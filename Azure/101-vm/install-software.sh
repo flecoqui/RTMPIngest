@@ -164,6 +164,7 @@ while [ : ]
 do
 folder=\$(date  +"%F-%X.%S")
 mkdir /chunks/\$folder
+echo mkdir /chunks/\$folder >> /testrtmp/log/ffmpeg.log
 /usr/bin/ffmpeg -f flv -i rtmp://127.0.0.1:1935/$1 -c copy -flags +global_header -f segment -segment_time 60 -segment_format_options movflags=+faststart -reset_timestamps 1 -strftime 1 "/chunks/\$folder/%Y-%m-%d_%H-%M-%S_chunk.mp4" 
 sleep 5
 done
@@ -238,13 +239,14 @@ then
 echo Processing file: "\$mp"
 #echo Token: "\$sastoken"
 #echo Url: "\$prefixuri"
-echo az storage blob upload -f "\$mp" -c "\$container" -n "\$mp" --account-name "\$account" --sas-token "\$sastoken"
+echo az storage blob upload -f "\$mp" -c "\$container" -n "\${mp:1}" --account-name "\$account" --sas-token "\$sastoken" >> /testrtmp/log/azcli.log
 lsof | grep \$mp
 if [ ! \${?} -eq 0 ];
 then
         echo copying "\$mp"
-        az storage blob upload -f "\$mp" -c "\$container" -n "\$mp" --account-name "\$account" --sas-token "\$sastoken"
+        az storage blob upload -f "\$mp" -c "\$container" -n "\${mp:1}" --account-name "\$account" --sas-token "\$sastoken"
         rm -f "\$mp"
+echo "\$mp" removed >> /testrtmp/log/azcli.log
 else
         echo in process "\$mp"
 fi
@@ -349,6 +351,7 @@ environ=`env`
 mkdir /git
 mkdir /temp
 mkdir /chunks
+chmod +777 /chunks
 mkdir /testrtmp
 mkdir /testrtmp/log
 mkdir /testrtmp/config
