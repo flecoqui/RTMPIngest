@@ -1,4 +1,4 @@
-# Deployment of a REST API  hosted on Azure Virtual Machine
+# Deployment of a RTMP Ingester hosted on Azure Virtual Machine using NGINX RTMP and FFMPEG
 
 <a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fflecoqui%2FRTMPIngest%2Fmaster%2FAzure%2F101-vm%2Fazuredeploy.json" target="_blank">
     <img src="http://azuredeploy.net/deploybutton.png"/>
@@ -8,7 +8,7 @@
 </a>
 
 This template allows you to deploy from Github a Live RTMP Ingester hosted on Azure Virtual Machine. Moreover, beyond the RTMP Ingester, the a service copy the video chunks on an Azure Storage Account.
-
+As this template build from the source code NGINX RTMP and FFMPEG, the deployment of the virtual machine can take up-to 60 minutes.
 
 
 
