@@ -230,23 +230,23 @@ cat <<EOF > /testrtmp/azcliloop.sh
 account='$1'
 container='$2'
 sastoken="$3"
+echo account: $account >> /testrtmp/log/azcli.log
+echo container: $container  >> /testrtmp/log/azcli.log
+echo sastoken: $sastoken   >> /testrtmp/log/azcli.log
 while [ : ]
 do
 for mp in /chunks/**/*.mp4
 do
 if [ \$mp != '/chunks/**/*.mp4' ];
 then
-echo Processing file: "\$mp"
-#echo Token: "\$sastoken"
-#echo Url: "\$prefixuri"
 echo az storage blob upload -f "\$mp" -c "\$container" -n "\${mp:1}" --account-name "\$account" --sas-token "\$sastoken" >> /testrtmp/log/azcli.log
 lsof | grep \$mp
 if [ ! \${?} -eq 0 ];
 then
-        echo copying "\$mp"
+        echo Processing file: "\$mp"  >> /testrtmp/log/azcli.log
         az storage blob upload -f "\$mp" -c "\$container" -n "\${mp:1}" --account-name "\$account" --sas-token "\$sastoken"
         rm -f "\$mp"
-echo "\$mp" removed >> /testrtmp/log/azcli.log
+        echo file "\$mp" removed >> /testrtmp/log/azcli.log
 else
         echo in process "\$mp"
 fi
@@ -267,7 +267,7 @@ After=network.target
 [Service]
 Type=simple
 User=testrtmpuser
-ExecStart=/bin/sh /testrtmp/azcliloop.sh
+ExecStart=/bin/bash /testrtmp/azcliloop.sh
 Restart=on-abort
 
 
@@ -354,6 +354,7 @@ mkdir /chunks
 chmod +777 /chunks
 mkdir /testrtmp
 mkdir /testrtmp/log
+chmod +777 /testrtmp/log
 mkdir /testrtmp/config
 
 # Write access in log subfolder
