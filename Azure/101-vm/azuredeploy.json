@@ -458,7 +458,7 @@
     },
     "storageSasToken": {
       "type": "string",
-      "value": "[listAccountSas(variables('storageAccountName'), variables('apiStorageVersion'), variables('accountSasProperties')).accountSasToken]"
+      "value": "[listServiceSas(variables('storageAccountName'), '2018-02-01', variables('serviceSasFunctionValues')).serviceSasToken]"
     },
     "httpCmd": {
       "type": "string",
