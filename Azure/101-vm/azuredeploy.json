@@ -440,7 +440,7 @@
               "fileUris": [
                 "[variables('configurationOS')[parameters('vmOS')].installScriptUrl]"
               ],
-              "commandToExecute": "[concat(variables('configurationOS')[parameters('vmOS')].commandToExecute, ' \"', parameters('rtmpPath'),'\" \"https://',variables('storageAccountName'),'.blob.core.windows.net/', parameters('containerName'),'\"  \"?', listServiceSas(variables('storageAccountName'), '2018-02-01', variables('serviceSasFunctionValues)).serviceSasToken, '\"')]"
+              "commandToExecute": "[concat(variables('configurationOS')[parameters('vmOS')].commandToExecute,' \"',parameters('rtmpPath'),'\" \"https://',variables('storageAccountName'),'.blob.core.windows.net/',parameters('containerName'),'\"  \"?',listServiceSas(variables('storageAccountName'), '2018-02-01', variables('serviceSasFunctionValues')).serviceSasToken,'\"')]"
             }
           }
         }
