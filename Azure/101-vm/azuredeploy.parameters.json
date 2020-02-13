@@ -22,6 +22,9 @@
     },
     "containerName": {
       "value": "rtmpcontainer"
+    },
+    "expiryDate": {
+      "value": "2025-01-01T00:00:01Z"
     }
   }
 }

@@ -62,6 +62,13 @@
       "metadata": {
         "description": "Container Name where the audio/video chunks are stored"
       }
+    },
+    "expiryDate": {
+      "type": "string",
+      "defaultValue": "2030-01-01T00:00:01Z",
+      "metadata": {
+        "description": "Expiry date of the SAS token"
+      }
     }
   },
   "variables": {
@@ -182,7 +189,7 @@
     },
     "configurationSize": "[variables(concat('configurationSize', parameters('vmSize')))]",
     "apiVersion": "2015-06-15",
-    "apiStorageVersion": "2018-07-01",
+    "apiStorageVersion": "2019-04-01",
     "storageAccountNamePrefix": "[toLower(substring(concat(parameters('namePrefix'), uniqueString(resourceGroup().id)), 0, 8))]",
     "storageAccountName": "[concat(variables('storageAccountNamePrefix'), uniqueString(concat(resourceGroup().id, variables('storageAccountNamePrefix'))),'sa')]",
     "storageAccountType": "Standard_LRS",
@@ -191,10 +198,13 @@
     "dataDisk1VhdName": "[concat(parameters('namePrefix'), 'datadisk')]",
     "networkSecurityGroupName": "[concat(parameters('namePrefix'), 'nsg')]",
     "serviceSasFunctionValues": {
-      "canonicalizedResource": "[concat('/blob/', variables('storageAccountName'), '/', parameters('containerName'))]",
-      "signedResource": "c",
-      "signedPermission": "cw",
-      "signedExpiry": "2050-01-01T00:00:00Z"
+      "signedServices": "b",
+      "signedResourceTypes": "sco",
+      "signedPermission": "rwdlac",
+      "signedStart": "2020-01-01T00:00:01Z",
+      "signedExpiry": "2030-01-01T00:00:01Z",
+      "signedProtocol": "https",
+      "keyToSign": "key1"
     },
     "nicName": "[concat(parameters('namePrefix'), 'nic')]",
     "addressPrefix": "10.0.0.0/16",
@@ -210,24 +220,25 @@
     {
       "type": "Microsoft.Storage/storageAccounts",
       "name": "[variables('storageAccountName')]",
-      "apiVersion": "2018-02-01",
+      "apiVersion": "[variables('apiStorageVersion')]",
       "location": "[resourceGroup().location]",
-      "properties": {
-        "accountType": "[variables('storageAccountType')]"
+      "sku": {
+        "name": "[variables('storageAccountType')]"
       },
+      "kind": "Storage",
       "resources": [
         {
-            "type": "blobServices/containers",
-            "apiVersion": "[variables('apiStorageVersion')]",
-            "name": "[concat('default/', parameters('containerName'))]",
-            "dependsOn": [
-                "[variables('storageAccountName')]"
-            ],
-            "properties": {
-                "publicAccess": "None"
-            }
+          "type": "blobServices/containers",
+          "apiVersion": "[variables('apiStorageVersion')]",
+          "name": "[concat('default/', parameters('containerName'))]",
+          "dependsOn": [
+            "[variables('storageAccountName')]"
+          ],
+          "properties": {
+            "publicAccess": "None"
+          }
         }
-    ]
+      ]
     },
     {
       "apiVersion": "[variables('apiVersion')]",
@@ -440,7 +451,7 @@
               "fileUris": [
                 "[variables('configurationOS')[parameters('vmOS')].installScriptUrl]"
               ],
-              "commandToExecute": "[concat(variables('configurationOS')[parameters('vmOS')].commandToExecute,' \"',parameters('rtmpPath'),'\" \"https://',variables('storageAccountName'),'.blob.core.windows.net/',parameters('containerName'),'\"  \"?',listServiceSas(variables('storageAccountName'), '2018-02-01', variables('serviceSasFunctionValues')).serviceSasToken,'\"')]"
+              "commandToExecute": "[concat(variables('configurationOS')[parameters('vmOS')].commandToExecute,' \"',parameters('rtmpPath'),'\" \"',variables('storageAccountName'),'\" \"',parameters('containerName'),'\"  \"',listAccountSas(variables('storageAccountName'), variables('apiStorageVersion'), variables('serviceSasFunctionValues')).accountSasToken,'\"')]"
             }
           }
         }
@@ -458,7 +469,11 @@
     },
     "storageSasToken": {
       "type": "string",
-      "value": "[listServiceSas(variables('storageAccountName'), '2018-02-01', variables('serviceSasFunctionValues')).serviceSasToken]"
+      "value": "[listAccountSas(variables('storageAccountName'), variables('apiStorageVersion'), variables('serviceSasFunctionValues')).accountSasToken]"
+    },
+    "containerUrl": {
+      "type": "string",
+      "value": "[concat('https://',variables('storageAccountName'),'.blob.core.windows.net/', parameters('containerName'),'?', listAccountSas(variables('storageAccountName'), variables('apiStorageVersion'), variables('serviceSasFunctionValues')).accountSasToken, '&comp=list&restype=container')]"
     },
     "httpCmd": {
       "type": "string",

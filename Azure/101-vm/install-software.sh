@@ -3,8 +3,9 @@
 # Parameter 1 hostname 
 azure_hostname=$1
 rtmp_path=$2
-storage_account_prefix=$3
-storage_sas_token=$4
+storage_account=$3
+storage_container=$4
+storage_sas_token=$5
 #############################################################################
 log()
 {
@@ -131,6 +132,16 @@ build_ffmpeg
 
 
 #############################################################################
+build_azcli(){
+cd /git
+ 
+curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
+
+log "azcli built"
+}
+
+
+#############################################################################
 build_azcopy(){
 cd /git
 wget https://aka.ms/downloadazcopy-v10-linux
@@ -146,16 +157,14 @@ sudo cp ./azcopy_linux_amd64_*/azcopy /usr/bin/
 log "azcopy built"
 }
 
-
-
 #############################################################################
 install_ffmpeg(){
 cat <<EOF > /testrtmp/ffmpegloop.sh
 while [ : ]
 do
-folder=$(date  +"%F-%X.%S")
-mkdir /temp/\$folder
-/usr/bin/ffmpeg -f flv -i rtmp://127.0.0.1:1935/$1 -c copy -flags +global_header -f segment -segment_time 60 -segment_format_options movflags=+faststart -reset_timestamps 1 -strftime 1 "/temp/\$folder/%Y-%m-%d_%H-%M-%S_chunk.mp4" 
+folder=\$(date  +"%F-%X.%S")
+mkdir /chunks/\$folder
+/usr/bin/ffmpeg -f flv -i rtmp://127.0.0.1:1935/$1 -c copy -flags +global_header -f segment -segment_time 60 -segment_format_options movflags=+faststart -reset_timestamps 1 -strftime 1 "/chunks/\$folder/%Y-%m-%d_%H-%M-%S_chunk.mp4" 
 sleep 5
 done
 EOF
@@ -186,9 +195,9 @@ prefixuri='$1'
 sastoken="$2"
 while [ : ]
 do
-for mp in /temp/**/*.mp4
+for mp in /chunks/**/*.mp4
 do
-if [ \$mp != '/temp/**/*.mp4' ];
+if [ \$mp != '/chunks/**/*.mp4' ];
 then
 echo Processing file: "\$mp"
 #echo Token: "\$sastoken"
@@ -209,18 +218,49 @@ sleep 60
 done
 EOF
 
-chmod +x   /testrtmp/azcopyloop.sh
+#############################################################################
+install_azcli(){
+cat <<EOF > /testrtmp/azcliloop.sh
+account='$1'
+container='$2'
+sastoken="$3"
+while [ : ]
+do
+for mp in /chunks/**/*.mp4
+do
+if [ \$mp != '/chunks/**/*.mp4' ];
+then
+echo Processing file: "\$mp"
+#echo Token: "\$sastoken"
+#echo Url: "\$prefixuri"
+echo az storage blob upload -f "\$mp" -c "\$container" -n "\$mp" --account-name "\$account" --sas-token "\$sastoken"
+lsof | grep \$mp
+if [ ! \${?} -eq 0 ];
+then
+        echo copying "\$mp"
+        az storage blob upload -f "\$mp" -c "\$container" -n "\$mp" --account-name "\$account" --sas-token "\$sastoken"
+        rm -f "\$mp"
+else
+        echo in process "\$mp"
+fi
+fi
+done
+sleep 60
+done
+EOF
+
+chmod +x   /testrtmp/azcliloop.sh
 adduser testrtmpuser --disabled-login
 
-cat <<EOF > /etc/systemd/system/azcopyloop.service
+cat <<EOF > /etc/systemd/system/azcliloop.service
 [Unit]
-Description=Azcopy Loop Service
+Description=Azcli Loop Service
 After=network.target
 
 [Service]
 Type=simple
-User=loop
-ExecStart=/bin/sh /testrtmp/azcopyloop.sh
+User=testrtmpuser
+ExecStart=/bin/sh /testrtmp/azcliloop.sh
 Restart=on-abort
 
 
@@ -228,6 +268,7 @@ Restart=on-abort
 WantedBy=multi-user.target
 EOF
 }
+
 #############################################################################
 install_nginx_rtmp(){
 /usr/local/nginx/sbin/nginx -s stop
@@ -235,7 +276,7 @@ install_nginx_rtmp(){
 cat <<EOF > /usr/local/nginx/conf/nginx.conf
 #user  nobody;
 worker_processes  1;
-error_log  /temp/error.log debug;
+error_log  /testrtmp/log/nginxerror.log debug;
 events {
     worker_connections  1024;
 }
@@ -283,7 +324,7 @@ rtmp {
             live on;
             interleave on;
             # exec_push ffmpeg -i rtmp://127.0.0.1:1935/live/stream -c copy -f flv /tmp/test.flv ;
-            # exec_push ffmpeg -f flv -i rtmp://10.0.1.4:1935/live/stream -c copy -flags +global_header -f segment -segment_time 60 -segment_format_options movflags=+faststart -reset_timestamps 1 /temp/testnginx%d.mp4  >> /temp/ffmpeg.log ;
+            # exec_push ffmpeg -f flv -i rtmp://10.0.1.4:1935/live/stream -c copy -flags +global_header -f segment -segment_time 60 -segment_format_options movflags=+faststart -reset_timestamps 1 /chunks/testnginx%d.mp4  >> /testrtmp/log/ffmpeg.log ;
         }
     }
 }
@@ -302,6 +343,7 @@ environ=`env`
 # Create folders
 mkdir /git
 mkdir /temp
+mkdir /chunks
 mkdir /testrtmp
 mkdir /testrtmp/log
 mkdir /testrtmp/config
@@ -314,7 +356,8 @@ log "Installation script start : $(date)"
 log "Net Core Installation: $(date)"
 log "#####  azure_hostname: $azure_hostname"
 log "#####  rtmp_path: $rtmp_path"
-log "#####  storage_account: $storage_account_prefix"
+log "#####  storage_account: $storage_account"
+log "#####  storage_container: $storage_container"
 log "#####  storage_key: $storage_sas_token"
 log "Installation script start : $(date)"
 check_os
@@ -349,34 +392,40 @@ else
 	    log "build ffmpeg nginx_rtmp redhat"
 		build_ffmpeg
 		build_nginx_rtmp
-		build_azcopy
+#		build_azcopy
+		build_azcli
 	else
 	    log "build ffmpeg nginx_rtmp "
 		build_ffmpeg
 		build_nginx_rtmp
-		build_azcopy
+#		build_azcopy
+		build_azcli
 	fi
 
 	if [ $iscentos -eq 0 ] ; then
 	    log "install ffmpeg nginx_rtmp azcopy centos"
 		install_ffmpeg $rtmp_path
 		install_nginx_rtmp
-		install_azcopy $storage_account_prefix  $storage_sas_token
+#		install_azcopy $storage_account_prefix  $storage_sas_token
+		install_azcli $storage_account  $storage_container   $storage_sas_token
 	elif [ $isredhat -eq 0 ] ; then
 	    log "install ffmpeg nginx_rtmp azcopy redhat"
 		install_ffmpeg $rtmp_path
 		install_nginx_rtmp
-		install_azcopy $storage_account_prefix  $storage_sas_token
+#		install_azcopy $storage_account_prefix  $storage_sas_token
+		install_azcli $storage_account  $storage_container   $storage_sas_token
 	elif [ $isubuntu -eq 0 ] ; then
 	    log "install ffmpeg nginx_rtmp azcopy ubuntu"
 		install_ffmpeg $rtmp_path
 		install_nginx_rtmp
-		install_azcopy $storage_account_prefix  $storage_sas_token
+#		install_azcopy $storage_account_prefix  $storage_sas_token
+		install_azcli $storage_account  $storage_container   $storage_sas_token
 	elif [ $isdebian -eq 0 ] ; then
 	    log "install ffmpeg nginx_rtmp azcopy debian"
 		install_ffmpeg $rtmp_path
 		install_nginx_rtmp
-		install_azcopy $storage_account_prefix  $storage_sas_token
+#		install_azcopy $storage_account_prefix  $storage_sas_token
+		install_azcli $storage_account  $storage_container   $storage_sas_token
 	fi
 	log "Start nginx_rtmp service"
 	/usr/local/nginx/sbin/nginx -s stop
@@ -384,10 +433,13 @@ else
 	log "Start ffmpeg service"
 	systemctl enable ffmpegloop.service
 	systemctl start ffmpegloop.service 
-	log "Start azcopy service"
-	systemctl enable azcopyloop.service
-	systemctl start azcopyloop.service 
-	log "Installation successful, services nginx_rtmp, ffmpeg and azcopy running"
+#	log "Start azcopy service"
+#	systemctl enable azcopyloop.service
+#	systemctl start azcopyloop.service 
+	log "Start azcli service"
+	systemctl enable azcliloop.service
+	systemctl start azcliloop.service 
+	log "Installation successful, services nginx_rtmp, ffmpeg and azcli running"
 fi
 exit 0 
 
