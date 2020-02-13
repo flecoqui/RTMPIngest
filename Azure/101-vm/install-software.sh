@@ -218,6 +218,11 @@ sleep 60
 done
 EOF
 
+}
+
+
+
+
 #############################################################################
 install_azcli(){
 cat <<EOF > /testrtmp/azcliloop.sh
