@@ -326,9 +326,7 @@ echo mkdir /chunks/\$folder >> /testrtmp/log/ffmpeg.log
 sleep 5
 done
 EOF
-
-adduser -M testrtmpuser
-usermod -L testrtmpuser
+adduser  testrtmpuser -s /sbin/nologin
 
 cat <<EOF > /etc/systemd/system/ffmpegloop.service
 [Unit]
@@ -464,8 +462,7 @@ done
 EOF
 
 chmod +x   /testrtmp/azcliloop.sh
-adduser -M testrtmpuser
-usermod -L testrtmpuser
+adduser  testrtmpuser -s /sbin/nologin
 
 cat <<EOF > /etc/systemd/system/azcliloop.service
 [Unit]
