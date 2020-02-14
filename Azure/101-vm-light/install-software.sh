@@ -315,7 +315,36 @@ Restart=on-abort
 WantedBy=multi-user.targetEOF
 EOF
 }
+install_ffmpeg_service_centos(){
+cat <<EOF > /testrtmp/ffmpegloop.sh
+while [ : ]
+do
+folder=\$(date  +"%F-%X.%S")
+mkdir /chunks/\$folder
+echo mkdir /chunks/\$folder >> /testrtmp/log/ffmpeg.log
+/usr/bin/ffmpeg -f flv -i rtmp://127.0.0.1:1935/$1 -c copy -flags +global_header -f segment -segment_time 60 -segment_format_options movflags=+faststart -reset_timestamps 1 -strftime 1 "/chunks/\$folder/%Y-%m-%d_%H-%M-%S_chunk.mp4" 
+sleep 5
+done
+EOF
 
+adduser -M testrtmpuser
+usermod -L testrtmpuser
+
+cat <<EOF > /etc/systemd/system/ffmpegloop.service
+[Unit]
+Description=ffmpeg Loop Service
+After=network.target
+
+[Service]
+Type=simple
+User=testrtmpuser
+ExecStart=/bin/sh /testrtmp/ffmpegloop.sh
+Restart=on-abort
+
+[Install]
+WantedBy=multi-user.targetEOF
+EOF
+}
 #############################################################################
 install_azcopy_service(){
 cat <<EOF > /testrtmp/azcopyloop.sh
@@ -385,6 +414,58 @@ EOF
 
 chmod +x   /testrtmp/azcliloop.sh
 adduser testrtmpuser --disabled-login
+
+cat <<EOF > /etc/systemd/system/azcliloop.service
+[Unit]
+Description=Azcli Loop Service
+After=network.target
+
+[Service]
+Type=simple
+User=testrtmpuser
+ExecStart=/bin/bash /testrtmp/azcliloop.sh
+Restart=on-abort
+
+
+[Install]
+WantedBy=multi-user.target
+EOF
+}
+
+install_azcli_service_centos(){
+cat <<EOF > /testrtmp/azcliloop.sh
+account='$1'
+container='$2'
+sastoken="$3"
+echo account: $account >> /testrtmp/log/azcli.log
+echo container: $container  >> /testrtmp/log/azcli.log
+echo sastoken: $sastoken   >> /testrtmp/log/azcli.log
+while [ : ]
+do
+for mp in /chunks/**/*.mp4
+do
+if [ \$mp != '/chunks/**/*.mp4' ];
+then
+echo az storage blob upload -f "\$mp" -c "\$container" -n "\${mp:1}" --account-name "\$account" --sas-token "\$sastoken" >> /testrtmp/log/azcli.log
+lsof | grep \$mp
+if [ ! \${?} -eq 0 ];
+then
+        echo Processing file: "\$mp"  >> /testrtmp/log/azcli.log
+        az storage blob upload -f "\$mp" -c "\$container" -n "\${mp:1}" --account-name "\$account" --sas-token "\$sastoken"
+        rm -f "\$mp"
+        echo file "\$mp" removed >> /testrtmp/log/azcli.log
+else
+        echo in process "\$mp"
+fi
+fi
+done
+sleep 60
+done
+EOF
+
+chmod +x   /testrtmp/azcliloop.sh
+adduser -M testrtmpuser
+usermod -L testrtmpuser
 
 cat <<EOF > /etc/systemd/system/azcliloop.service
 [Unit]
@@ -608,16 +689,16 @@ else
 
 	if [ $iscentos -eq 0 ] ; then
 	    log "install ffmpeg nginx_rtmp azcli centos"
-		install_ffmpeg_service $rtmp_path
+		install_ffmpeg_service_centos $rtmp_path
 		install_nginx_rtmp_service_centos
 #		install_azcopy_service $storage_account_prefix  $storage_sas_token
-		install_azcli_service $storage_account  $storage_container   $storage_sas_token
+		install_azcli_service_centos $storage_account  $storage_container   $storage_sas_token
 	elif [ $isredhat -eq 0 ] ; then
 	    log "install ffmpeg nginx_rtmp azcli redhat"
-		install_ffmpeg_service $rtmp_path
+		install_ffmpeg_service_centos $rtmp_path
 		install_nginx_rtmp_service_centos
 #		install_azcopy_service $storage_account_prefix  $storage_sas_token
-		install_azcli_service $storage_account  $storage_container   $storage_sas_token
+		install_azcli_service_centos $storage_account  $storage_container   $storage_sas_token
 	elif [ $isubuntu -eq 0 ] ; then
 	    log "install ffmpeg nginx_rtmp azcli ubuntu"
 		install_ffmpeg_service $rtmp_path
