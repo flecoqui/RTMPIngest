@@ -580,20 +580,26 @@ else
 	    log "install git ubuntu"
 		install_git_ubuntu
 	elif [ $isdebian -eq 0 ] ; then
-	    log "configure network"
+	    log "configure network debian"
 		configure_network
 	    log "install git debian"
 		install_git_ubuntu
 	fi
-	log "build ffmpeg and nginx_rtmp"
-	if [ $isredhat -eq 0 ] ; then
+	log "build ffmpeg nginx_rtmp azcli"
+	if [ $iscentos -eq 0 ] ; then
+	    log "build ffmpeg nginx_rtmp centos"
+		install_ffmpeg_centos
+		install_nginx_rtmp_centos
+#		install_azcopy_centos
+		install_azcli_centos
+	elif [ $isredhat -eq 0 ] ; then
 	    log "build ffmpeg nginx_rtmp redhat"
 		install_ffmpeg_centos
 		install_nginx_rtmp_centos
 #		install_azcopy_centos
 		install_azcli_centos
 	else
-	    log "build ffmpeg nginx_rtmp "
+	    log "build ffmpeg nginx_rtmp debian ubuntu"
 		install_ffmpeg
 		install_nginx_rtmp
 #		install_azcopy
