@@ -29,8 +29,7 @@
         "debian",
         "ubuntu",
         "centos",
-        "redhat",
-        "windowsserver2016"
+        "redhat"
       ],
       "metadata": {
         "description": "The Operating System to be installed on the VM. Default value debian. Allowed values: debian,ubuntu,centos,redhat,nanoserver2016,windowsserver2016"

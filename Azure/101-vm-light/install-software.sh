@@ -319,7 +319,7 @@ install_ffmpeg_service_centos(){
 cat <<EOF > /testrtmp/ffmpegloop.sh
 while [ : ]
 do
-folder=\$(date  +"%F-%X.%S")
+folder=\$(date  +"%Y-%m-%d-%T")
 mkdir /chunks/\$folder
 echo mkdir /chunks/\$folder >> /testrtmp/log/ffmpeg.log
 /usr/bin/ffmpeg -f flv -i rtmp://127.0.0.1:1935/$1 -c copy -flags +global_header -f segment -segment_time 60 -segment_format_options movflags=+faststart -reset_timestamps 1 -strftime 1 "/chunks/\$folder/%Y-%m-%d_%H-%M-%S_chunk.mp4" 
