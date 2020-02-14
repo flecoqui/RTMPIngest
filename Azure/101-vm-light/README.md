@@ -8,7 +8,7 @@
 </a>
 
 This template allows you to deploy from Github a Live RTMP Ingester hosted on Azure Virtual Machine. Moreover, beyond the RTMP Ingester, the a service copy the video chunks on an Azure Storage Account.
-This template doesn't build NGINX RTMP nor FFMPEG.
+As this template doesn't build FFMPEG from the source code, the deployment should take around 20 minutes to build NGINX RTMP.
 
 
 
