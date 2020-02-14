@@ -241,7 +241,13 @@ rpm -Uvh http://li.nux.ro/download/nux/dextop/el7/x86_64/nux-dextop-release-0-5.
 yum -y install ffmpeg ffmpeg-devel
 log "ffmpeg installed"
 }
-
+install_ffmpeg_redhat(){
+# install pre-requisites
+yum -y install https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+yum-config-manager --add-repo https://negativo17.org/repos/epel-multimedia.repo
+yum -y install ffmpeg 
+log "ffmpeg installed"
+}
 
 #############################################################################
 install_azcli(){
@@ -672,7 +678,7 @@ else
 		install_azcli_centos
 	elif [ $isredhat -eq 0 ] ; then
 	    log "build ffmpeg nginx_rtmp redhat"
-		install_ffmpeg_centos
+		install_ffmpeg_redhat
 		install_nginx_rtmp_centos
 #		install_azcopy_centos
 		install_azcli_centos
