@@ -110,6 +110,120 @@ make install
 log "nginx_rtmp installed"
 
 }
+install_nginx_rtmp_centos(){
+# install pre-requisites
+yum -y groupinstall 'Development Tools'
+yum -y install epel-release
+yum install -y  wget git unzip perl perl-devel perl-ExtUtils-Embed libxslt libxslt-devel libxml2 libxml2-devel gd gd-devel pcre-devel GeoIP GeoIP-devel
+# Download source code
+cd /usr/local/src
+wget https://nginx.org/download/nginx-1.14.0.tar.gz
+tar -xzvf nginx-1.14.0.tar.gz
+wget https://ftp.pcre.org/pub/pcre/pcre-8.42.zip
+unzip pcre-8.42.zip
+wget https://www.zlib.net/zlib-1.2.11.tar.gz
+tar -xzvf zlib-1.2.11.tar.gz
+wget https://www.openssl.org/source/openssl-1.1.0h.tar.gz
+tar -xzvf openssl-1.1.0h.tar.gz
+git clone https://github.com/sergey-dryabzhinsky/nginx-rtmp-module.git
+rm -f *.tar.gz *.zip
+ls -lah
+cd nginx-1.14.0/
+./configure --prefix=/etc/nginx \
+            --sbin-path=/usr/sbin/nginx \
+            --modules-path=/usr/lib64/nginx/modules \
+            --conf-path=/etc/nginx/nginx.conf \
+            --error-log-path=/var/log/nginx/error.log \
+            --pid-path=/var/run/nginx.pid \
+            --lock-path=/var/run/nginx.lock \
+            --user=nginx \
+            --group=nginx \
+            --build=CentOS \
+            --builddir=nginx-1.14.0 \
+            --with-select_module \
+            --with-poll_module \
+            --with-threads \
+            --with-file-aio \
+            --with-http_ssl_module \
+            --with-http_v2_module \
+            --with-http_realip_module \
+            --with-http_addition_module \
+            --with-http_xslt_module=dynamic \
+            --with-http_image_filter_module=dynamic \
+            --with-http_geoip_module=dynamic \
+            --with-http_sub_module \
+            --with-http_dav_module \
+            --with-http_flv_module \
+            --with-http_mp4_module \
+            --with-http_gunzip_module \
+            --with-http_gzip_static_module \
+            --with-http_auth_request_module \
+            --with-http_random_index_module \
+            --with-http_secure_link_module \
+            --with-http_degradation_module \
+            --with-http_slice_module \
+            --with-http_stub_status_module \
+            --http-log-path=/var/log/nginx/access.log \
+            --http-client-body-temp-path=/var/cache/nginx/client_temp \
+            --http-proxy-temp-path=/var/cache/nginx/proxy_temp \
+            --http-fastcgi-temp-path=/var/cache/nginx/fastcgi_temp \
+            --http-uwsgi-temp-path=/var/cache/nginx/uwsgi_temp \
+            --http-scgi-temp-path=/var/cache/nginx/scgi_temp \
+            --with-mail=dynamic \
+            --with-mail_ssl_module \
+            --with-stream=dynamic \
+            --with-stream_ssl_module \
+            --with-stream_realip_module \
+            --with-stream_geoip_module=dynamic \
+            --with-stream_ssl_preread_module \
+            --with-compat \
+            --with-pcre=../pcre-8.42 \
+            --with-pcre-jit \
+            --with-zlib=../zlib-1.2.11 \
+            --with-openssl=../openssl-1.1.0h \
+            --with-openssl-opt=no-nextprotoneg \
+            --add-module=../nginx-rtmp-module \
+            --with-debug
+
+make 
+make install
+
+ln -s /usr/lib64/nginx/modules /etc/nginx/modules
+
+useradd -r -d /var/cache/nginx/ -s /sbin/nologin -U nginx
+
+mkdir -p /var/cache/nginx/
+chown -R nginx:nginx /var/cache/nginx/
+
+nginx -t
+nginx -V
+
+cat <<EOF > /lib/systemd/system/nginx.service
+[Unit]
+Description=nginx - high performance web server
+Documentation=https://nginx.org/en/docs/
+After=network-online.target remote-fs.target nss-lookup.target
+Wants=network-online.target
+
+[Service]
+Type=forking
+PIDFile=/var/run/nginx.pid
+ExecStartPre=/usr/sbin/nginx -t -c /etc/nginx/nginx.conf
+ExecStart=/usr/sbin/nginx -c /etc/nginx/nginx.conf
+ExecReload=/bin/kill -s HUP $MAINPID
+ExecStop=/bin/kill -s TERM $MAINPID
+
+[Install]
+WantedBy=multi-user.target
+EOF
+systemctl daemon-reload
+systemctl start nginx
+systemctl enable nginx
+
+
+log "nginx_rtmp installed"
+
+}
 
 #############################################################################
 install_ffmpeg(){
@@ -119,12 +233,36 @@ apt-get -y install ffmpeg
 log "ffmpeg installed"
 }
 
+install_ffmpeg_centos(){
+# install pre-requisites
+yum -y install epel-release
+rpm -v --import http://li.nux.ro/download/nux/RPM-GPG-KEY-nux.ro
+rpm -Uvh http://li.nux.ro/download/nux/dextop/el7/x86_64/nux-dextop-release-0-5.el7.nux.noarch.rpm
+yum -y install ffmpeg ffmpeg-devel
+log "ffmpeg installed"
+}
+
 
 #############################################################################
 install_azcli(){
 cd /git
  
 curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
+
+log "azcli installed"
+}
+
+install_azcli_centos(){
+cd /git
+rpm --import https://packages.microsoft.com/keys/microsoft.asc
+
+sh -c 'echo -e "[azure-cli]
+name=Azure CLI
+baseurl=https://packages.microsoft.com/yumrepos/azure-cli
+enabled=1
+gpgcheck=1
+gpgkey=https://packages.microsoft.com/keys/microsoft.asc" > /etc/yum.repos.d/azure-cli.repo'
+yum -y install azure-cli
 
 log "azcli installed"
 }
@@ -328,6 +466,68 @@ EOF
 
 }
 
+install_nginx_rtmp_service_centos(){
+systemctl stop nginx
+mv /etc/nginx/nginx.conf /etc/nginx/nginx.conf.asli
+
+cat <<EOF > /etc/nginx/nginx.conf
+#user  nobody;
+worker_processes  1;
+error_log  /testrtmp/log/nginxerror.log debug;
+events {
+    worker_connections  1024;
+}
+http {
+    include       mime.types;
+    default_type  application/octet-stream;
+
+    sendfile        on;
+    keepalive_timeout  65;
+
+    server {
+        listen       80;
+        server_name  localhost;
+
+        # rtmp stat
+        location /stat {
+            rtmp_stat all;
+            rtmp_stat_stylesheet stat.xsl;
+        }
+        location /stat.xsl {
+            # you can move stat.xsl to a different location
+            root /usr/build/nginx-rtmp-module;
+        }
+
+        # rtmp control
+        location /control {
+            rtmp_control all;
+        }
+
+        error_page   500 502 503 504  /50x.html;
+        location = /50x.html {
+            root   html;
+        }
+    }
+}
+
+rtmp {
+    server {
+        listen 1935;
+        ping 30s;
+        notify_method get;
+        buflen 5s;
+
+        application live {
+            live on;
+            interleave on;
+            # exec_push ffmpeg -i rtmp://127.0.0.1:1935/live/stream -c copy -f flv /tmp/test.flv ;
+            # exec_push ffmpeg -f flv -i rtmp://10.0.1.4:1935/live/stream -c copy -flags +global_header -f segment -segment_time 60 -segment_format_options movflags=+faststart -reset_timestamps 1 /chunks/testnginx%d.mp4  >> /testrtmp/log/ffmpeg.log ;
+        }
+    }
+}
+EOF
+
+}
 
 
 
@@ -388,10 +588,10 @@ else
 	log "build ffmpeg and nginx_rtmp"
 	if [ $isredhat -eq 0 ] ; then
 	    log "build ffmpeg nginx_rtmp redhat"
-		install_ffmpeg
-		install_nginx_rtmp
-#		install_azcopy
-		install_azcli
+		install_ffmpeg_centos
+		install_nginx_rtmp_centos
+#		install_azcopy_centos
+		install_azcli_centos
 	else
 	    log "build ffmpeg nginx_rtmp "
 		install_ffmpeg
@@ -403,13 +603,13 @@ else
 	if [ $iscentos -eq 0 ] ; then
 	    log "install ffmpeg nginx_rtmp azcli centos"
 		install_ffmpeg_service $rtmp_path
-		install_nginx_rtmp_service
+		install_nginx_rtmp_service_centos
 #		install_azcopy_service $storage_account_prefix  $storage_sas_token
 		install_azcli_service $storage_account  $storage_container   $storage_sas_token
 	elif [ $isredhat -eq 0 ] ; then
 	    log "install ffmpeg nginx_rtmp azcli redhat"
 		install_ffmpeg_service $rtmp_path
-		install_nginx_rtmp_service
+		install_nginx_rtmp_service_centos
 #		install_azcopy_service $storage_account_prefix  $storage_sas_token
 		install_azcli_service $storage_account  $storage_container   $storage_sas_token
 	elif [ $isubuntu -eq 0 ] ; then
