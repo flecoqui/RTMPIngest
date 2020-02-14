@@ -338,7 +338,7 @@ After=network.target
 [Service]
 Type=simple
 User=testrtmpuser
-ExecStart=/bin/sh /testrtmp/ffmpegloop.sh
+ExecStart=/bin/bash /testrtmp/ffmpegloop.sh
 Restart=on-abort
 
 [Install]
@@ -693,29 +693,39 @@ else
 		install_nginx_rtmp_service_centos
 #		install_azcopy_service $storage_account_prefix  $storage_sas_token
 		install_azcli_service_centos $storage_account  $storage_container   $storage_sas_token
+	    log "Start nginx_rtmp service"
+        systemctl stop nginx
+        systemctl start nginx
 	elif [ $isredhat -eq 0 ] ; then
 	    log "install ffmpeg nginx_rtmp azcli redhat"
 		install_ffmpeg_service_centos $rtmp_path
 		install_nginx_rtmp_service_centos
 #		install_azcopy_service $storage_account_prefix  $storage_sas_token
 		install_azcli_service_centos $storage_account  $storage_container   $storage_sas_token
+	    log "Start nginx_rtmp service"
+        systemctl stop nginx
+        systemctl start nginx
 	elif [ $isubuntu -eq 0 ] ; then
 	    log "install ffmpeg nginx_rtmp azcli ubuntu"
 		install_ffmpeg_service $rtmp_path
 		install_nginx_rtmp_service
 #		install_azcopy_service $storage_account_prefix  $storage_sas_token
 		install_azcli_service $storage_account  $storage_container   $storage_sas_token
+	    log "Start nginx_rtmp service"
+	    /usr/local/nginx/sbin/nginx -s stop
+	    /usr/local/nginx/sbin/nginx
 	elif [ $isdebian -eq 0 ] ; then
 	    log "install ffmpeg nginx_rtmp azcli debian"
 		install_ffmpeg_service $rtmp_path
 		install_nginx_rtmp_service
 #		install_azcopy_service $storage_account_prefix  $storage_sas_token
 		install_azcli_service $storage_account  $storage_container   $storage_sas_token
+	    log "Start nginx_rtmp service"
+	    /usr/local/nginx/sbin/nginx -s stop
+	    /usr/local/nginx/sbin/nginx
 	fi
-	log "Start nginx_rtmp service"
-	/usr/local/nginx/sbin/nginx -s stop
-	/usr/local/nginx/sbin/nginx
-	log "Start ffmpeg service"
+	
+    log "Start ffmpeg service"
 	systemctl enable ffmpegloop.service
 	systemctl start ffmpegloop.service 
 #	log "Start azcopy service"
