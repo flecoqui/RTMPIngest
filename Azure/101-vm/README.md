@@ -59,7 +59,7 @@ When you deploy the service you can define the following parameters:</p>
 * **namePrefix:** The name prefix which will be used for all the services deployed with this ARM Template</p>
 * **vmAdminUsername:** VM login by default "VMAdmin"</p>
 * **vmAdminPassword:** VM password by default "VMP@ssw0rd"</p>
-* **vmOS:** supported values "debian","ubuntu","centos","redhat","windowsserver2016"by default "debian"</p>
+* **vmOS:** supported values "debian","ubuntu" by default "debian"</p>
 * **vmSize:** supported values"Small" (Standard_D2s_v3),"Medium" (Standard_D4s_v3),"Large" (Standard_D8s_v3),"XLarge" (Standard_D16s_v3) by default "Small"</p>
 * **containerName:** the name of the container on the Azure Storage where the audio/video chunks will be recorded, by default "rtmpcontainer"</p>
 * **expiryDate:** the expiry date of the SAS Token used to access the content stored in the container. by default "2030-01-01T00:00:01Z"</p>
