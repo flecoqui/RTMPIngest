@@ -504,7 +504,7 @@ cat <<EOF > /usr/local/nginx/html/player.html
 </head>
 <body>
 <video id="player" class="video-js vjs-default-skin" height="360" width="640" controls preload="none">
-    <source src="http://\$1:8080/hls/stream.m3u8" type="application/x-mpegURL" />
+    <source src="http://$1:8080/hls/stream.m3u8" type="application/x-mpegURL" />
 </video>
 <script>
     var player = videojs('#player');
@@ -630,7 +630,7 @@ cat <<EOF > /etc/nginx/html/player.html
 </head>
 <body>
 <video id="player" class="video-js vjs-default-skin" height="360" width="640" controls preload="none">
-    <source src="http://\$1:8080/hls/stream.m3u8" type="application/x-mpegURL" />
+    <source src="http://$1:8080/hls/stream.m3u8" type="application/x-mpegURL" />
 </video>
 <script>
     var player = videojs('#player');

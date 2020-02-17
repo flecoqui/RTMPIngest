@@ -1,4 +1,4 @@
-# Deployment of a RTMP Ingester hosted on Azure Virtual Machine using NGINX RTMP and FFMPEG
+# Deployment of a RTMP Ingester hosted on Azure Virtual Machine using NGINX RTMP and FFMPEG with HLS Playback
 
 <a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fflecoqui%2FRTMPIngest%2Fmaster%2FAzure%2F101-vm-light-hls%2Fazuredeploy.json" target="_blank">
     <img src="http://azuredeploy.net/deploybutton.png"/>
@@ -7,7 +7,7 @@
     <img src="http://armviz.io/visualizebutton.png"/>
 </a>
 
-This template allows you to deploy from Github a Live RTMP Ingester hosted on Azure Virtual Machine. Moreover, beyond the RTMP Ingester, the a service copy the video chunks on an Azure Storage Account.
+This template allows you to deploy from Github a Live RTMP Ingester hosted on Azure Virtual Machine. Moreover, beyond the RTMP Ingester, the a service copy the video chunks on an Azure Storage Account. Moreover, this service allow the user to playback the HLS stream generated from the incoming RTMP stream.
 As this template doesn't build FFMPEG from the source code, the deployment should take around 20 minutes to build NGINX RTMP.
 
 
@@ -86,6 +86,17 @@ For instance :
 After one minute of streaming, the audio/video chunks are copied in the Azure Storage Container. You can display the content of this container if you open the output parameter containerUrl with your favorite browser.
 
 ![](https://raw.githubusercontent.com/flecoqui/RTMPIngest/master/Azure/101-vm-light-hls/Docs/container.png)
+
+You can also playback the HLS stream, if you open with your browser the following urls:
+            
+
+            http://vmName.region.cloudapp.azure.com/player.html
+            
+            http://vmName.region.cloudapp.azure.com:8080/hls/stream.m3u8
+
+
+![](https://raw.githubusercontent.com/flecoqui/RTMPIngest/master/Azure/101-vm-light-hls/Docs/player.png)
+
 
 
 ## DELETE THE RESOURCE GROUP:

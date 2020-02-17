@@ -77,7 +77,7 @@
     "partitionCount": "1",
     "hostingMode": "default",
     "configurationSizeSmall": {
-      "vmSize": "Standard_D2s_v3",
+      "vmSize": "Standard_B2s",
       "diskSize": "128"
     },
     "configurationSizeMedium": {
