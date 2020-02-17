@@ -526,7 +526,7 @@ http {
     default_type  application/octet-stream;
     keepalive_timeout  65;
     tcp_nopush on;
-    aio on;
+#    aio on;
     directio 512;
 
     server {
@@ -651,7 +651,7 @@ http {
     default_type  application/octet-stream;
     keepalive_timeout  65;
     tcp_nopush on;
-    aio on;
+#    aio on;
     directio 512;
 
     server {
