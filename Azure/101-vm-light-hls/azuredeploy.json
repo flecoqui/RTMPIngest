@@ -289,9 +289,9 @@
             }
           },
           {
-            "name": "http",
+            "name": "hls",
             "properties": {
-              "description": "http server port",
+              "description": "hls server port",
               "protocol": "Tcp",
               "sourcePortRange": "*",
               "destinationPortRange": "8080",
