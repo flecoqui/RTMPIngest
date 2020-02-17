@@ -504,7 +504,7 @@ cat <<EOF > /usr/local/nginx/html/player.html
 </head>
 <body>
 <video id="player" class="video-js vjs-default-skin" height="360" width="640" controls preload="none">
-    <source src="http://localhost:8080/hls/stream.m3u8" type="application/x-mpegURL" />
+    <source src="http://\$1:8080/hls/stream.m3u8" type="application/x-mpegURL" />
 </video>
 <script>
     var player = videojs('#player');
@@ -512,6 +512,7 @@ cat <<EOF > /usr/local/nginx/html/player.html
 </body>
 </html>
 EOF
+
 
 cat <<EOF > /usr/local/nginx/conf/nginx.conf
 #user  nobody;
@@ -523,13 +524,13 @@ events {
 http {
     include       mime.types;
     default_type  application/octet-stream;
-    sendfile        on;
     keepalive_timeout  65;
     tcp_nopush on;
     aio on;
     directio 512;
 
     server {
+        sendfile        on;
         listen       80;
         server_name  localhost;
 
@@ -554,9 +555,10 @@ http {
         }
     }
     server {
+        sendfile        off;
         listen 8080;
 
-        location / {
+        location /hls {
             # Disable cache
             add_header 'Cache-Control' 'no-cache';
 
@@ -565,7 +567,7 @@ http {
             add_header 'Access-Control-Expose-Headers' 'Content-Length';
 
             # allow CORS preflight requests
-            if ($request_method = 'OPTIONS') {
+            if (\$request_method = 'OPTIONS') {
                 add_header 'Access-Control-Allow-Origin' '*';
                 add_header 'Access-Control-Max-Age' 1728000;
                 add_header 'Content-Type' 'text/plain charset=UTF-8';
@@ -592,20 +594,19 @@ rtmp {
         buflen 5s;
         chunk_size 4000;
 
+#        application live {
+#            live on;
+#            interleave on;
+#        }
         application live {
             live on;
             interleave on;
-            # exec_push ffmpeg -i rtmp://127.0.0.1:1935/live/stream -c copy -f flv /tmp/test.flv ;
-            # exec_push ffmpeg -f flv -i rtmp://10.0.1.4:1935/live/stream -c copy -flags +global_header -f segment -segment_time 60 -segment_format_options movflags=+faststart -reset_timestamps 1 /chunks/testnginx%d.mp4  >> /testrtmp/log/ffmpeg.log ;
-        }
-        application show {
-            live on;
             hls on;
             hls_path /mnt/hls/;
             hls_fragment 3;
             hls_playlist_length 60;
             # disable consuming the stream from nginx as rtmp
-            #deny play all;
+            # deny play all;
         }
     }
 }
@@ -617,6 +618,27 @@ install_nginx_rtmp_service_centos(){
 systemctl stop nginx
 mv /etc/nginx/nginx.conf /etc/nginx/nginx.conf.asli
 
+
+cat <<EOF > /etc/nginx/html/player.html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Live Streaming</title>
+    <link href="//vjs.zencdn.net/5.8/video-js.min.css" rel="stylesheet">
+    <script src="//vjs.zencdn.net/5.8/video.min.js"></script>
+</head>
+<body>
+<video id="player" class="video-js vjs-default-skin" height="360" width="640" controls preload="none">
+    <source src="http://\$1:8080/hls/stream.m3u8" type="application/x-mpegURL" />
+</video>
+<script>
+    var player = videojs('#player');
+</script>
+</body>
+</html>
+EOF
+
 cat <<EOF > /etc/nginx/nginx.conf
 #user  nobody;
 worker_processes  1;
@@ -627,11 +649,13 @@ events {
 http {
     include       mime.types;
     default_type  application/octet-stream;
-
-    sendfile        on;
     keepalive_timeout  65;
+    tcp_nopush on;
+    aio on;
+    directio 512;
 
     server {
+        sendfile        on;
         listen       80;
         server_name  localhost;
 
@@ -655,36 +679,67 @@ http {
             root   html;
         }
     }
+    server {
+        sendfile        off;
+        listen 8080;
+
+        location /hls {
+            # Disable cache
+            add_header 'Cache-Control' 'no-cache';
+
+            # CORS setup
+            add_header 'Access-Control-Allow-Origin' '*' always;
+            add_header 'Access-Control-Expose-Headers' 'Content-Length';
+
+            # allow CORS preflight requests
+            if (\$request_method = 'OPTIONS') {
+                add_header 'Access-Control-Allow-Origin' '*';
+                add_header 'Access-Control-Max-Age' 1728000;
+                add_header 'Content-Type' 'text/plain charset=UTF-8';
+                add_header 'Content-Length' 0;
+                return 204;
+            }
+
+            types {
+                application/dash+xml mpd;
+                application/vnd.apple.mpegurl m3u8;
+                video/mp2t ts;
+            }
+
+            root /mnt/;
+        }
+    }
 }
 
 rtmp {
     server {
         listen 1935;
-        chunk_size 4000;
         ping 30s;
         notify_method get;
         buflen 5s;
+        chunk_size 4000;
 
+#        application live {
+#            live on;
+#            interleave on;
+#        }
         application live {
             live on;
             interleave on;
-            # exec_push ffmpeg -i rtmp://127.0.0.1:1935/live/stream -c copy -f flv /tmp/test.flv ;
-            # exec_push ffmpeg -f flv -i rtmp://10.0.1.4:1935/live/stream -c copy -flags +global_header -f segment -segment_time 60 -segment_format_options movflags=+faststart -reset_timestamps 1 /chunks/testnginx%d.mp4  >> /testrtmp/log/ffmpeg.log ;
-        }
-        application show {
-            live on;
             hls on;
             hls_path /mnt/hls/;
             hls_fragment 3;
             hls_playlist_length 60;
             # disable consuming the stream from nginx as rtmp
-            deny play all;
+            # deny play all;
         }
     }
 }
 EOF
 
+
 }
+
 
 
 
@@ -766,7 +821,7 @@ else
 	if [ $iscentos -eq 0 ] ; then
 	    log "install ffmpeg nginx_rtmp azcli centos"
 		install_ffmpeg_service_centos $rtmp_path
-		install_nginx_rtmp_service_centos
+		install_nginx_rtmp_service_centos $azure_hostname
 #		install_azcopy_service $storage_account_prefix  $storage_sas_token
 		install_azcli_service_centos $storage_account  $storage_container   $storage_sas_token
 	    log "Start nginx_rtmp service"
@@ -775,7 +830,7 @@ else
 	elif [ $isredhat -eq 0 ] ; then
 	    log "install ffmpeg nginx_rtmp azcli redhat"
 		install_ffmpeg_service_centos $rtmp_path
-		install_nginx_rtmp_service_centos
+		install_nginx_rtmp_service_centos $azure_hostname
 #		install_azcopy_service $storage_account_prefix  $storage_sas_token
 		install_azcli_service_centos $storage_account  $storage_container   $storage_sas_token
 	    log "Start nginx_rtmp service"
@@ -784,7 +839,7 @@ else
 	elif [ $isubuntu -eq 0 ] ; then
 	    log "install ffmpeg nginx_rtmp azcli ubuntu"
 		install_ffmpeg_service $rtmp_path
-		install_nginx_rtmp_service
+		install_nginx_rtmp_service $azure_hostname
 #		install_azcopy_service $storage_account_prefix  $storage_sas_token
 		install_azcli_service $storage_account  $storage_container   $storage_sas_token
 	    log "Start nginx_rtmp service"
@@ -793,7 +848,7 @@ else
 	elif [ $isdebian -eq 0 ] ; then
 	    log "install ffmpeg nginx_rtmp azcli debian"
 		install_ffmpeg_service $rtmp_path
-		install_nginx_rtmp_service
+		install_nginx_rtmp_service $azure_hostname
 #		install_azcopy_service $storage_account_prefix  $storage_sas_token
 		install_azcli_service $storage_account  $storage_container   $storage_sas_token
 	    log "Start nginx_rtmp service"
