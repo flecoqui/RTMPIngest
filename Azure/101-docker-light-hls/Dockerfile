@@ -156,5 +156,6 @@ ENV PORT 1935
 EXPOSE 1935
 
 RUN ls /usr/local/nginx/sbin 
-CMD ["/usr/local/nginx/sbin/nginx"]
+#CMD ["/usr/local/nginx/sbin/nginx"]
+CMD ["/bin/bash"]
 
