@@ -35,7 +35,7 @@ RUN make
 RUN make install
 
 
-RUN cat <<EOF > /testrtmp/ffmpegloop.sh
+RUN mkdir /testrtmp
 RUN echo 'while [ : ]\n\
   do\n\
 folder=\$(date  +"%F-%X.%S")\n\
