@@ -4,6 +4,8 @@ FROM ubuntu:18.04
 RUN apt-get -y update \
  && apt-get install -y git \
  && apt-get install -y curl \
+ && apt-get install -y wget \
+ && apt-get install -y tar \
  && apt-get install -y ffmpeg 
 
 
