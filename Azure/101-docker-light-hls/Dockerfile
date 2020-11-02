@@ -11,6 +11,14 @@ RUN apt-get -y update \
 
 # install Azure CLI
 RUN mkdir /git 
+RUN mkdir /temp
+RUN mkdir /chunks
+RUN chmod +777 /chunks
+RUN mkdir /testrtmp
+RUN mkdir /testrtmp/log
+RUN chmod +777 /testrtmp/log
+RUN mkdir /testrtmp/config
+
 WORKDIR /git 
 RUN curl -sL https://aka.ms/InstallAzureCLIDeb | bash
 RUN wget https://aka.ms/downloadazcopy-v10-linux 
@@ -137,6 +145,7 @@ rtmp {\n\
         }\n\
     }\n\
 }\n" > /usr/local/nginx/conf/nginx.conf
+
 
 ENV PORT 8080
 EXPOSE 8080
