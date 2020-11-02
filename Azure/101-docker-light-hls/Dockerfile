@@ -136,7 +136,7 @@ rtmp {\n\
             hls_playlist_length 60;\n\
         }\n\
     }\n\
-}\n" >> /usr/local/nginx/conf/nginx.conf
+}\n" > /usr/local/nginx/conf/nginx.conf
 
 ENV PORT 8080
 EXPOSE 8080
