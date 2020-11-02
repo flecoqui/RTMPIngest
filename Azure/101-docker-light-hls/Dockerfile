@@ -8,9 +8,9 @@ RUN apt-get -y update \
 RUN apt-get -y install ffmpeg
 
 # install Azure CLI
-RUN cd /git 
+RUN mkdir /git 
+WORKDIR /git 
 RUN curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
-RUN cd /git
 RUN wget https://aka.ms/downloadazcopy-v10-linux 
 #Expand Archive
 RUN tar -xvf downloadazcopy-v10-linux
@@ -24,7 +24,7 @@ RUN cp ./azcopy_linux_amd64_*/azcopy /usr/bin/
 # install pre-requisites
 RUN apt-get -y install build-essential curl g++
 # Download source code
-RUN cd /git
+WORKDIR /git
 RUN apt-get -y install libpcre3 libpcre3-dev
 RUN apt-get -y install libssl-dev
 RUN apt-get -y install zlib1g-dev
@@ -32,7 +32,7 @@ RUN apt-get -y install zlib1g-dev
 RUN wget http://nginx.org/download/nginx-1.16.1.tar.gz
 RUN tar xvfz nginx-1.16.1.tar.gz
 RUN git clone https://github.com/arut/nginx-rtmp-module.git 
-RUN cd nginx-1.16.1
+WORKDIR /git/nginx-1.16.1
 RUN ./configure --add-module=/git/nginx-rtmp-module
 RUN make
 RUN make install
