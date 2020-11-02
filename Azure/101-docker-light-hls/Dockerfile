@@ -43,7 +43,6 @@ RUN make
 RUN make install
 
 
-RUN mkdir /testrtmp
 RUN echo 'while [ : ]\n\
   do\n\
 folder=\$(date  +"%F-%X.%S")\n\
