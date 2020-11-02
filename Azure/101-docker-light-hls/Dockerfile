@@ -10,7 +10,7 @@ RUN apt-get -y update \
 # install Azure CLI
 RUN mkdir /git 
 WORKDIR /git 
-RUN curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
+RUN curl -sL https://aka.ms/InstallAzureCLIDeb | bash
 RUN wget https://aka.ms/downloadazcopy-v10-linux 
 #Expand Archive
 RUN tar -xvf downloadazcopy-v10-linux
