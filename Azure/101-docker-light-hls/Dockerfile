@@ -2,10 +2,10 @@ FROM ubuntu:18.04
 
 # install git
 RUN apt-get -y update \
- && apt-get install -y git
+ && apt-get install -y git \
+ && apt-get install -y curl \
+ && apt-get install -y ffmpeg 
 
-# install ffmpeg
-RUN apt-get -y install ffmpeg
 
 # install Azure CLI
 RUN mkdir /git 
