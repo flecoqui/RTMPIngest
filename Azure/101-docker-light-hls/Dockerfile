@@ -1,10 +1,10 @@
 FROM ubuntu:18.04
 
 # install git
-RUN apt-get -y install git
+RUN apt-get -y update \
+ && apt-get install -y git
 
 # install ffmpeg
-RUN apt-get -y update
 RUN apt-get -y install ffmpeg
 
 # install Azure CLI
@@ -25,7 +25,6 @@ RUN cp ./azcopy_linux_amd64_*/azcopy /usr/bin/
 RUN apt-get -y install build-essential curl g++
 # Download source code
 RUN cd /git
-RUN apt-get -y update
 RUN apt-get -y install libpcre3 libpcre3-dev
 RUN apt-get -y install libssl-dev
 RUN apt-get -y install zlib1g-dev
