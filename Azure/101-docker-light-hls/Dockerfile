@@ -16,12 +16,7 @@ RUN curl -sL https://aka.ms/InstallAzureCLIDeb | bash
 RUN wget https://aka.ms/downloadazcopy-v10-linux 
 #Expand Archive
 RUN tar -xvf downloadazcopy-v10-linux
-#(Optional) Remove existing AzCopy version
-RUN rm /usr/bin/azcopy 
-#Move AzCopy to the destination you want to store it
 RUN cp ./azcopy_linux_amd64_*/azcopy /usr/bin/
-
-
 
 # install pre-requisites
 RUN apt-get -y install build-essential curl g++
