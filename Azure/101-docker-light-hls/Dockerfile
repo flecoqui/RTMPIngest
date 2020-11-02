@@ -147,3 +147,5 @@ EXPOSE 443
 ENV PORT 1935
 EXPOSE 1935
 
+CMD ["/usr/local/nginx/sbin/nginx"]
+
