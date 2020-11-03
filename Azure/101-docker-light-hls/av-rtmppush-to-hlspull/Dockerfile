@@ -61,7 +61,11 @@ RUN echo '<!DOCTYPE html>\n\
     var player = videojs("#player");\n\
  </script>\n\
  </body>\n\
- </html>\n\' >> /usr/local/nginx/html/player.html
+ <p>HOSTNAME: '$HOSTNAME'</p>\n\
+ <p>PORT_HLS: '$PORT_HLS'</p>\n\
+ <p>PORT_HTML: '$PORT_HTML'</p>\n\
+ <p>PORT_RTMP: '$PORT_RTMP'</p>\n\
+ </html>\n' > /usr/local/nginx/html/player.html
 
 RUN echo "worker_processes  1;\n\
 error_log  /testrtmp/log/nginxerror.log debug;\n\
@@ -118,7 +122,7 @@ http {\n\
  }\n\
 rtmp {\n\
     server {\n\
-        listen 1935;\n\
+        listen "$PORT_RTMP";\n\
         ping 30s;\n\
         notify_method get;\n\
         buflen 5s;\n\
@@ -136,20 +140,21 @@ rtmp {\n\
 
 ENV PATH="/usr/local/nginx/sbin:${PATH}"
 
-EXPOSE $PORT_HLS
-EXPOSE $PORT_HTML
-EXPOSE $PORT_SSL
-EXPOSE $PORT_RTMP
+# EXPOSE $PORT_HLS
+# EXPOSE $PORT_HTML
+# EXPOSE $PORT_SSL
+# EXPOSE $PORT_RTMP
 
 #RUN ls /usr/local/nginx/sbin 
 #CMD ["/usr/local/nginx/sbin/nginx"]
 #CMD ["/bin/bash"]
 
-RUN mkdir /docker-entrypoint.d
+#RUN mkdir /docker-entrypoint.d
 COPY docker-entrypoint.sh /
 RUN chmod +755 /docker-entrypoint.sh 
 ENTRYPOINT ["/docker-entrypoint.sh"]
 
-# STOPSIGNAL SIGTERM
+
+STOPSIGNAL SIGTERM
 
 CMD ["nginx", "-g", "daemon off;"]
