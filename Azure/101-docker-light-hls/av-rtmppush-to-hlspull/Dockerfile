@@ -134,7 +134,7 @@ rtmp {\n\
     }\n\
 }\n" > /usr/local/nginx/conf/nginx.conf
 
-RUN echo "export PATH=$PATH:/usr/local/nginx/sbin" > /etc/environment
+ENV PATH="/usr/local/nginx/sbin:${PATH}"
 
 EXPOSE $PORT_HLS
 EXPOSE $PORT_HTML
