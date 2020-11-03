@@ -32,6 +32,7 @@ RUN apt-get -y install libpcre3 libpcre3-dev
 RUN apt-get -y install libssl-dev
 RUN apt-get -y install zlib1g-dev
 RUN apt-get -y install autoconf
+RUN apt-get -y install pkg-config
 #git clone https://github.com/nginx/nginx.git
 RUN wget http://nginx.org/download/nginx-1.16.1.tar.gz
 RUN tar xvfz nginx-1.16.1.tar.gz
