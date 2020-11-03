@@ -34,7 +34,7 @@ RUN apt-get -y install zlib1g-dev
 RUN apt-get -y install autoconf
 RUN apt-get -y install pkg-config
 #RUN apt-get -y install meson
-RUN  apt-get install python3 python3-pip python3-setuptools \
+RUN  apt-get -y install python3 python3-pip python3-setuptools \
                        python3-wheel ninja-build
 RUN pip3 install meson
 
