@@ -41,6 +41,8 @@ RUN make
 RUN make install
 
 
+WORKDIR /
+
 
 RUN echo '<!DOCTYPE html>\n\
 <html lang="en">\n\
@@ -132,6 +134,7 @@ rtmp {\n\
     }\n\
 }\n" > /usr/local/nginx/conf/nginx.conf
 
+RUN export PATH=$PATH:/usr/local/nginx/sbin
 
 EXPOSE $PORT_HLS
 EXPOSE $PORT_HTML
@@ -147,6 +150,6 @@ COPY docker-entrypoint.sh /
 RUN chmod +755 /docker-entrypoint.sh 
 ENTRYPOINT ["/docker-entrypoint.sh"]
 
-STOPSIGNAL SIGTERM
+# STOPSIGNAL SIGTERM
 
 CMD ["nginx", "-g", "daemon off;"]
