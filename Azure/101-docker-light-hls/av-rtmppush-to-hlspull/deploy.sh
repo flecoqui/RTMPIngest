@@ -11,3 +11,11 @@ docker push flecoqui/av-rtmppush-to-hlspull
 
 # ffmpeg command to generate rtmp stream on a laptop with a webcam
 ffmpeg.exe -v verbose -f dshow -i video="Integrated Webcam":audio="Microphone (Realtek(R) Audio)"  -video_size 1280x720 -strict -2 -c:a aac -b:a 192k -ar 44100 -r 30 -g 60 -keyint_min 60 -b:v 2000000 -c:v libx264 -preset veryfast  -profile main -level 3.0 -pix_fmt yuv420p -bufsize 1800k -maxrate 400k    -f flv rtmp://localhost:1936/live/stream
+
+# when the container is running and fed with rtmp feed, you can open the following urls:
+# App to play the hls stream
+http://<hostname>/player.html
+# HLS stream url
+http://<hostname>:8080/hls/stream.m3u8
+ 
+ 
