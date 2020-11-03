@@ -55,7 +55,7 @@ RUN echo '<!DOCTYPE html>\n\
  </head>\n\
  <body>\n\
 <video id="player" class="video-js vjs-default-skin" height="360" width="640" controls preload="none">\n\
-    <source src="http://$HOSTNAME:8080/hls/stream.m3u8" type="application/x-mpegURL" />\n\
+    <source src=":'$PORT_HLS'/hls/stream.m3u8" type="application/x-mpegURL" />\n\
  </video>\n\
  <script>\n\
     var player = videojs("#player");\n\
@@ -76,7 +76,7 @@ http {\n\
     directio 512;\n\
     server {\n\
         sendfile        on;\n\
-        listen       80;\n\
+        listen       "$PORT_HTML";\n\
         server_name  localhost;\n\
         location /stat {\n\
             rtmp_stat all;\n\
@@ -95,7 +95,7 @@ http {\n\
     }\n\
     server {\n\
         sendfile        off;\n\
-        listen 8080;\n\
+        listen "$PORT_HLS";\n\
         location /hls {\n\
             add_header 'Cache-Control' 'no-cache';\n\
             add_header 'Access-Control-Allow-Origin' '*' always;\n\
