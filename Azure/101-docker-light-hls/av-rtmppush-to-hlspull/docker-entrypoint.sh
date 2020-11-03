@@ -68,7 +68,7 @@ http {
             add_header 'Cache-Control' 'no-cache';
             add_header 'Access-Control-Allow-Origin' '*' always;
             add_header 'Access-Control-Expose-Headers' 'Content-Length';
-            if ($request_method = 'OPTIONS') {
+            if (\$request_method = 'OPTIONS') {
                 add_header 'Access-Control-Allow-Origin' '*';
                 add_header 'Access-Control-Max-Age' 1728000;
                 add_header 'Content-Type' 'text/plain charset=UTF-8';
