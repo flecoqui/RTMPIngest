@@ -55,7 +55,7 @@ RUN echo '<!DOCTYPE html>\n\
  </head>\n\
  <body>\n\
 <video id="player" class="video-js vjs-default-skin" height="360" width="640" controls preload="none">\n\
-    <source src="http://${HOSTNAME}:8080/hls/stream.m3u8" type="application/x-mpegURL" />\n\
+    <source src="http://$HOSTNAME:8080/hls/stream.m3u8" type="application/x-mpegURL" />\n\
  </video>\n\
  <script>\n\
     var player = videojs("#player");\n\
@@ -134,7 +134,7 @@ rtmp {\n\
     }\n\
 }\n" > /usr/local/nginx/conf/nginx.conf
 
-RUN export PATH=$PATH:/usr/local/nginx/sbin
+RUN echo "export PATH=$PATH:/usr/local/nginx/sbin" > /etc/environment
 
 EXPOSE $PORT_HLS
 EXPOSE $PORT_HTML
