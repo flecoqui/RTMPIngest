@@ -6,8 +6,5 @@ RUN apt-get -y update \
 
 COPY docker-entrypoint.sh /
 RUN chmod +755 /docker-entrypoint.sh 
-ENTRYPOINT ["/docker-entrypoint.sh"]
-
-STOPSIGNAL SIGTERM
-
-CMD ["ffmpeg", "-version"]
+ENTRYPOINT ["ffmpeg"]
+CMD ["-version"]
