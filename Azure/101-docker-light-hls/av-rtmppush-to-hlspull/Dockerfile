@@ -55,7 +55,7 @@ RUN echo '<!DOCTYPE html>\n\
  </head>\n\
  <body>\n\
 <video id="player" class="video-js vjs-default-skin" height="360" width="640" controls preload="none">\n\
-    <source src=":http://'$HOSTNAME:$PORT_HLS'/hls/stream.m3u8" type="application/x-mpegURL" />\n\
+    <source src="http://'$HOSTNAME:$PORT_HLS'/hls/stream.m3u8" type="application/x-mpegURL" />\n\
  </video>\n\
  <script>\n\
     var player = videojs("#player");\n\
