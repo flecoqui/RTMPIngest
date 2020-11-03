@@ -33,7 +33,11 @@ RUN apt-get -y install libssl-dev
 RUN apt-get -y install zlib1g-dev
 RUN apt-get -y install autoconf
 RUN apt-get -y install pkg-config
-RUN apt-get -y install meson
+#RUN apt-get -y install meson
+RUN  apt-get install python3 python3-pip python3-setuptools \
+                       python3-wheel ninja-build
+RUN pip3 install meson
+
 #git clone https://github.com/nginx/nginx.git
 RUN wget http://nginx.org/download/nginx-1.16.1.tar.gz
 RUN tar xvfz nginx-1.16.1.tar.gz
