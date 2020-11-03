@@ -31,8 +31,18 @@ WORKDIR /git
 RUN apt-get -y install libpcre3 libpcre3-dev
 RUN apt-get -y install libssl-dev
 RUN apt-get -y install zlib1g-dev
+RUN apt-get -y install libglib2.0-dev
+RUN apt-get -y install libgtk2.0-dev
 RUN apt-get -y install autoconf
 RUN apt-get -y install pkg-config
+
+RUN wget https://github.com/Kitware/CMake/releases/download/v3.15.2/cmake-3.15.2.tar.gz
+RUN tar -zxvf cmake-3.15.2.tar.gz
+WORKDIR /git/cmake-3.15.2
+RUN ./bootstrap
+RUN make
+RUN make install
+
 #RUN apt-get -y install meson
 RUN  apt-get -y install python3 python3-pip python3-setuptools \
                        python3-wheel ninja-build
