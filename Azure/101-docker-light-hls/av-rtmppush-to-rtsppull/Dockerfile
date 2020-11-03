@@ -33,6 +33,7 @@ RUN apt-get -y install libssl-dev
 RUN apt-get -y install zlib1g-dev
 RUN apt-get -y install autoconf
 RUN apt-get -y install pkg-config
+RUN apt-get -y install meson
 #git clone https://github.com/nginx/nginx.git
 RUN wget http://nginx.org/download/nginx-1.16.1.tar.gz
 RUN tar xvfz nginx-1.16.1.tar.gz
@@ -47,10 +48,11 @@ WORKDIR /git
 RUN git clone https://github.com/GStreamer/gst-rtsp-server.git
 WORKDIR /git/gst-rtsp-server
 # current main branch uses meson build, I did not want to figure that out... so 1.16
-RUN git checkout origin/1.16
-RUN ./autogen.sh --noconfigure && GST_PLUGINS_GOOD_DIR=$(pkg-config --variable=pluginsdir gstreamer-plugins-bad-1.0) ./configure && make
-
-
+# RUN git checkout origin/1.16
+# RUN ./autogen.sh --noconfigure && GST_PLUGINS_GOOD_DIR=$(pkg-config --variable=pluginsdir gstreamer-plugins-bad-1.0) ./configure && make
+RUN meson builddir
+WORKDIR /git/gst-rtsp-server/builddir
+RUN meson compile
 WORKDIR /
 
 
