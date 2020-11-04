@@ -35,9 +35,6 @@ RUN apt-get -y install libglib2.0-dev
 RUN apt-get -y install libgtk2.0-dev
 RUN apt-get -y install autoconf
 RUN apt-get -y install pkg-config
-RUN apt-get -y install libgstreamer1.0-dev
-RUN apt-get -y install libgstreamer-plugins-base1.0-dev
-RUN apt-get -y install libgstreamer-plugins-bad1.0-dev
 
 RUN wget https://github.com/Kitware/CMake/releases/download/v3.15.2/cmake-3.15.2.tar.gz
 RUN tar -zxvf cmake-3.15.2.tar.gz
@@ -70,7 +67,8 @@ RUN git checkout remotes/origin/1.14
 # current main branch uses meson build, I did not want to figure that out... so 1.16
 # RUN git checkout origin/1.16
 #RUN apt-get -y install  gstreamer0.10-plugins-good
-RUN apt-get -y install gstreamer1.0-tools gstreamer1.0-alsa gstreamer1.0-plugins-base gstreamer1.0-plugins-good gstreamer1.0-plugins-bad gstreamer1.0-plugins-ugly gstreamer1.0-libav
+RUN apt-get -y install gstreamer1.0-tools gstreamer1.0-alsa gstreamer1.0-plugins-base gstreamer1.0-plugins-good gstreamer1.0-plugins-bad gstreamer1.0-plugins-ugly gstreamer1.0-libav  libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev libgstreamer-plugins-bad1.0-dev
+
 # RUN ./autogen.sh --noconfigure && GST_PLUGINS_GOOD_DIR=$(pkg-config --variable=pluginsdir gstreamer-plugins-bad-1.0) ./configure && make
 # RUN GST_PLUGINS_GOOD_DIR=$(pkg-config --variable=pluginsdir gstreamer-1.0) 
 RUN ls -l /usr/lib/x86_64-linux-gnu/
