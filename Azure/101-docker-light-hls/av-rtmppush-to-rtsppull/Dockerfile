@@ -47,7 +47,7 @@ RUN make install
 RUN  apt-get -y install python3 python3-pip python3-setuptools \
                        python3-wheel ninja-build
 RUN pip3 install meson
-
+WORKDIR /git
 #git clone https://github.com/nginx/nginx.git
 RUN wget http://nginx.org/download/nginx-1.16.1.tar.gz
 RUN tar xvfz nginx-1.16.1.tar.gz
