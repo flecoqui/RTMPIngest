@@ -80,6 +80,7 @@ WORKDIR /git/gst-rtsp-server/builddir
 RUN meson compile
 WORKDIR /git/gst-rtsp-server/examples/
 RUN ls -l /git/gst-rtsp-server/examples
+RUN find /git/gst-rtsp-server -name test-uri*
 #RUN meson builddir
 #RUN ninja -C builddir
 #RUN ls -l /git/gst-rtsp-server/examples/builddir
