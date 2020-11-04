@@ -74,17 +74,18 @@ RUN apt-get -y install gstreamer1.0-tools gstreamer1.0-alsa gstreamer1.0-plugins
 # RUN ./autogen.sh --noconfigure && GST_PLUGINS_GOOD_DIR=$(pkg-config --variable=pluginsdir gstreamer-plugins-bad-1.0) ./configure && make
 # RUN GST_PLUGINS_GOOD_DIR=$(pkg-config --variable=pluginsdir gstreamer-1.0) 
 RUN ls -l /usr/lib/x86_64-linux-gnu/
+RUN meson configure -Doption=examples
 RUN meson builddir
 WORKDIR /git/gst-rtsp-server/builddir
 RUN meson compile
 WORKDIR /git/gst-rtsp-server/examples/
 RUN ls -l /git/gst-rtsp-server/examples
-RUN meson builddir
-RUN ninja -C builddir
-RUN ls -l /git/gst-rtsp-server/examples/builddir
-WORKDIR /git/gst-rtsp-server/examples/builddir
-RUN meson compile
-RUN ls -l /git/gst-rtsp-server/examples
+#RUN meson builddir
+#RUN ninja -C builddir
+#RUN ls -l /git/gst-rtsp-server/examples/builddir
+#WORKDIR /git/gst-rtsp-server/examples/builddir
+#RUN meson compile
+#RUN ls -l /git/gst-rtsp-server/examples
 WORKDIR /
 
 RUN echo '<!DOCTYPE html>\n\
