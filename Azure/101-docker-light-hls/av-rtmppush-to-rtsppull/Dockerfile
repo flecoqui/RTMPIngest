@@ -68,6 +68,7 @@ RUN git checkout remotes/origin/1.14
 # current main branch uses meson build, I did not want to figure that out... so 1.16
 # RUN git checkout origin/1.16
 #RUN apt-get -y install  gstreamer0.10-plugins-good
+RUN DEBIAN_FRONTEND="noninteractive" apt-get -y install tzdata
 RUN apt-get -y install gstreamer1.0-tools gstreamer1.0-alsa gstreamer1.0-plugins-base gstreamer1.0-plugins-good gstreamer1.0-plugins-bad gstreamer1.0-plugins-ugly gstreamer1.0-libav  libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev libgstreamer-plugins-bad1.0-dev
 
 # RUN ./autogen.sh --noconfigure && GST_PLUGINS_GOOD_DIR=$(pkg-config --variable=pluginsdir gstreamer-plugins-bad-1.0) ./configure && make
