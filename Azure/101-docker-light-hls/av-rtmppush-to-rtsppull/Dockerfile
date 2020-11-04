@@ -91,7 +91,7 @@ RUN find /git -name test-uri*
 #RUN meson compile
 #RUN ls -l /git/gst-rtsp-server/examples
 WORKDIR /
-
+COPY sample_640x360.mp4 /sample_640x360.mp4
 RUN echo '<!DOCTYPE html>\n\
 <html lang="en">\n\
 <head>\n\

@@ -102,6 +102,7 @@ rtmp {
     }
 }" > /usr/local/nginx/conf/nginx.conf
 exec /usr/local/nginx/sbin/nginx -g "daemon off;" &
-exec /git/gst-rtsp-server//builddir/examples/test-uri rtmp://127.0.0.1:$PORT_RTMP/live/stream
+#exec /git/gst-rtsp-server/builddir/examples/test-uri rtmp://127.0.0.1:$PORT_RTMP/live/stream
+exec /git/gst-rtsp-server/builddir/examples/test-uri file:///sample_640x360.mp4
 
 exec "$@"
