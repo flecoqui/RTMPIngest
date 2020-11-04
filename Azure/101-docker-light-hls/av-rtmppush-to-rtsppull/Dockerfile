@@ -78,7 +78,10 @@ RUN meson builddir
 WORKDIR /git/gst-rtsp-server/builddir
 RUN meson compile
 WORKDIR /git/gst-rtsp-server/examples/
+RUN ls -l /git/gst-rtsp-server/examples
 RUN meson builddir
+RUN ninja -C builddir
+RUN ls -l /git/gst-rtsp-server/examples/builddir
 WORKDIR /git/gst-rtsp-server/examples/builddir
 RUN meson compile
 RUN ls -l /git/gst-rtsp-server/examples
