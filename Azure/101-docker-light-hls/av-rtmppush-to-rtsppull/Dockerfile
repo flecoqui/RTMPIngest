@@ -37,7 +37,7 @@ RUN apt-get -y install autoconf
 RUN apt-get -y install pkg-config
 RUN apt-get -y install libgstreamer1.0-dev
 RUN apt-get -y install libgstreamer-plugins-base1.0-dev
-
+RUN apt-get -y install libgstreamer-plugins-bad1.0-dev
 
 RUN wget https://github.com/Kitware/CMake/releases/download/v3.15.2/cmake-3.15.2.tar.gz
 RUN tar -zxvf cmake-3.15.2.tar.gz
