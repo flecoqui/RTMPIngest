@@ -66,6 +66,7 @@ WORKDIR /git
 # Get the gst-rtsp-server source and build
 RUN git clone https://github.com/GStreamer/gst-rtsp-server.git
 WORKDIR /git/gst-rtsp-server
+RUN git checkout remotes/origin/1.14
 # current main branch uses meson build, I did not want to figure that out... so 1.16
 # RUN git checkout origin/1.16
 #RUN apt-get -y install  gstreamer0.10-plugins-good
