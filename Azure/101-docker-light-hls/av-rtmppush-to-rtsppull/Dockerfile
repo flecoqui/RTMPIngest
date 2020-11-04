@@ -65,7 +65,7 @@ RUN git clone https://github.com/GStreamer/gst-rtsp-server.git
 WORKDIR /git/gst-rtsp-server
 # current main branch uses meson build, I did not want to figure that out... so 1.16
 # RUN git checkout origin/1.16
-# RUN ./autogen.sh --noconfigure && GST_PLUGINS_GOOD_DIR=$(pkg-config --variable=pluginsdir gstreamer-plugins-bad-1.0) ./configure && make
+RUN ./autogen.sh --noconfigure && GST_PLUGINS_GOOD_DIR=$(pkg-config --variable=pluginsdir gstreamer-plugins-bad-1.0) ./configure && make
 RUN meson builddir
 WORKDIR /git/gst-rtsp-server/builddir
 RUN meson compile
