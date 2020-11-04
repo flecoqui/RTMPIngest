@@ -76,6 +76,7 @@ RUN apt-get -y install gstreamer1.0-tools gstreamer1.0-alsa gstreamer1.0-plugins
 RUN ls -l /usr/lib/x86_64-linux-gnu/
 RUN meson configure -Doption=examples -Doption=tests  
 RUN meson builddir
+RUN ninja -C builddir
 WORKDIR /git/gst-rtsp-server/builddir
 RUN meson compile
 WORKDIR /git/gst-rtsp-server/examples/
