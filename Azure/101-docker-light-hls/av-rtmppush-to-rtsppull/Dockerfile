@@ -1,5 +1,6 @@
 FROM ubuntu:18.04
-
+# set DEBIAN_FRONTEND for tzdata installation 
+RUN DEBIAN_FRONTEND="noninteractive
 
 ENV HOSTNAME 127.0.0.1
 ENV PORT_HLS 8080
