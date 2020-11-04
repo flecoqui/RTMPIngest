@@ -1,8 +1,6 @@
 FROM ubuntu:18.04
 
-# install git
-# RUN apt-get -y update \
-#  && apt-get install -y ffmpeg
+# build ffmpeg 4.2.2 from the source code 
 # Compile and install fresh ffmpeg from sources:
 # See: https://trac.ffmpeg.org/wiki/CompilationGuide/Ubuntu
 RUN apt-get update -qq && apt-get -y install \
@@ -60,11 +58,6 @@ RUN mkdir -p ~/ffmpeg_sources ~/bin && cd ~/ffmpeg_sources && \
     make install -j8 && \
     hash -r
 RUN mv ~/bin/ffmpeg /usr/local/bin && mv ~/bin/ffprobe /usr/local/bin && mv ~/bin/ffplay /usr/local/bin
-
-
-# RUN apt -y update 
-# RUN add-apt-repository ppa:jonathonf/ffmpeg-4
-# RUN apt -y install ffmpeg
 
 ENTRYPOINT ["ffmpeg"]
 CMD ["-version"]
