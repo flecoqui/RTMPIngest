@@ -53,7 +53,8 @@ RUN wget http://nginx.org/download/nginx-1.16.1.tar.gz
 RUN tar xvfz nginx-1.16.1.tar.gz
 RUN git clone https://github.com/arut/nginx-rtmp-module.git 
 WORKDIR /git/nginx-1.16.1
-RUN ./configure --with-http_ssl_module --add-module=/git/nginx-rtmp-module
+# RUN ./configure --with-http_ssl_module --add-module=/git/nginx-rtmp-module
+RUN ./configure --add-module=/git/nginx-rtmp-module
 RUN make
 RUN make install
 
