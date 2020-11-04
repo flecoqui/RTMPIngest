@@ -77,8 +77,12 @@ RUN ls -l /usr/lib/x86_64-linux-gnu/
 RUN meson builddir
 WORKDIR /git/gst-rtsp-server/builddir
 RUN meson compile
+WORKDIR /git/gst-rtsp-server/examples/
+RUN meson builddir
+WORKDIR /git/gst-rtsp-server/examples/builddir
+RUN meson compile
+RUN ls -l /git/gst-rtsp-server/examples
 WORKDIR /
-
 
 RUN echo '<!DOCTYPE html>\n\
 <html lang="en">\n\
