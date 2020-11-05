@@ -8,7 +8,7 @@ RUN apt-get -y update \
  && apt-get install -y tar \
  && apt-get install -y ffmpeg 
 
-ENV INPUT_URI "rtmp://127.0.0.1:1935/test"
+ENV INPUT_URI "rtmp://127.0.0.1:1935/live/stream"
 ENV STORAGE_ACCOUNT "blobstoragebackup"
 ENV STORAGE_CONTAINER "testrtmp"
 ENV STORAGE_SASTOKEN "?sv=2019-10-10&st=2020-11-05T15%3A36%3A35Z&se=2030-11-06T15%3A36%3A00Z&sr=c&sp=racwdl&sig=Tuq0xBpej61AP0%2BJetD9cJBIOkaHrPCVgU4t60Vp7Rg%3D"
