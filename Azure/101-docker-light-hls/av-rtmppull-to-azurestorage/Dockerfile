@@ -45,15 +45,15 @@ RUN chmod +x   /testav/ffmpegloop.sh
 RUN adduser testavuser --disabled-login
 
 RUN echo '[Unit] \n\
-Description=ffmpeg Loop Service\n\
-After=network.target\n\
-[Service]\n\
-Type=simple\n\
-User=testavuser\n\
-ExecStart=/bin/sh /testav/ffmpegloop.sh\n\
-Restart=on-abort\n\
-[Install]\n\
-WantedBy=multi-user.targetEOF\n\' > /etc/systemd/system/ffmpegloop.service
+Description=ffmpeg Loop Service \n\
+After=network.target \n\
+[Service] \n\
+Type=simple \n\
+User=testavuser \n\
+ExecStart=/bin/sh /testav/ffmpegloop.sh \n\
+Restart=on-abort \n\
+[Install]  \n\
+WantedBy=multi-user.targetEOF \n' > /etc/systemd/system/ffmpegloop.service
 
 
 
@@ -65,7 +65,7 @@ while [ : ]\n\
  for mp in /chunks/**/*.mp4\n\
  do\n\
 if [ \$mp != \'/chunks/**/*.mp4\' ];\n\
-then\n\
+then \n\
 echo az storage blob upload -f \"\$mp\" -c \"\$container\" -n \"\${mp:1}\" --account-name \"\$account\" --sas-token \"\$sastoken\" >> /testav/log/azcli.log \n\
 lsof | grep \$mp\n\
 if [ ! \${?} -eq 0 ];\n\
@@ -75,11 +75,11 @@ then\n\
         echo file \"\$mp\" removed >> /testav/log/azcli.log\n\
 else\n\
         echo in process \"\$mp\"\n\
-fi\n\
-fi\n\
-done\n\
-sleep 60\n\
-done\n\' > /testav/azcliloop.sh
+fi \n\
+fi \n\
+done \n\
+sleep 60 \n\
+done \n' > /testav/azcliloop.sh
 
 RUN chmod +x   /testav/azcliloop.sh
 RUN adduser testavuser --disabled-login
@@ -93,7 +93,7 @@ User=testavuser \n\
 ExecStart=/bin/bash /testav/azcliloop.sh \n\
 Restart=on-abort \n\
 [Install] \n\
-WantedBy=multi-user.target \n\' > /etc/systemd/system/azcliloop.service
+WantedBy=multi-user.target \n' > /etc/systemd/system/azcliloop.service
 
 
 COPY docker-entrypoint.sh /
