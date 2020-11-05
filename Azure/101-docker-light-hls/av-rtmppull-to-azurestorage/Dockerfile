@@ -25,6 +25,7 @@ RUN mkdir /testav/config
 
 # Install Azure CLI
 WORKDIR /git 
+RUN apt-get install -y systemd
 RUN curl -sL https://aka.ms/InstallAzureCLIDeb | bash
 # Install azcopy
 RUN wget https://aka.ms/downloadazcopy-v10-linux 
