@@ -71,11 +71,11 @@ echo az storage blob upload -f \"$mp\" -c \"\$container\" -n \"${mp:1}\" --accou
 lsof | grep $mp\n\
 if [ ! ${?} -eq 0 ];\n\
 then\n\
-        az storage blob upload -f \"$mp\" -c \"$container\" -n \"${mp:1}\" --account-name \"$account\" --sas-token \"$sastoken\"\n\
-        rm -f \"$mp\"\n\
-        echo file \"$mp\" re moved >> /testav/log/azcli.log\n\
+        az storage blob upload -f $mp -c \"$container\" -n \"${mp:1}\" --account-name \"$account\" --sas-token \"$sastoken\"\n\
+        rm -f  $mp \n\
+        echo file $mp re moved >> /testav/log/azcli.log\n\
 else\n\
-        echo in process \"$mp\" \n\
+        echo in process $mp \n\
 fi \n\
 fi \n\
 done \n\
