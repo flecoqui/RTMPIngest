@@ -64,7 +64,7 @@ while [ : ]\n\
  do\n\
  for mp in /chunks/**/*.mp4\n\
  do\n\
-if [ \$mp != \'/chunks/**/*.mp4\' ];\n\
+if [ \$mp != \"/chunks/**/*.mp4\" ];\n\
 then \n\
 echo az storage blob upload -f \"\$mp\" -c \"\$container\" -n \"\${mp:1}\" --account-name \"\$account\" --sas-token \"\$sastoken\" >> /testav/log/azcli.log \n\
 lsof | grep \$mp\n\
@@ -74,7 +74,7 @@ then\n\
         rm -f \"\$mp\"\n\
         echo file \"\$mp\" removed >> /testav/log/azcli.log\n\
 else\n\
-        echo in process \"\$mp\"\n\
+        echo in process \"\$mp\" \n\
 fi \n\
 fi \n\
 done \n\
