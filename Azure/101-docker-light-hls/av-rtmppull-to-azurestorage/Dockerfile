@@ -37,7 +37,7 @@ while [ : ]\n\
 folder=$(date  +"%F-%X.%S")\n\
 mkdir /chunks/\$folder\n\
 echo mkdir /chunks/\$folder >> /testav/log/ffmpeg.log \n\
-/usr/bin/ffmpeg -f flv -i $input_uri -c copy -flags +global_header -f segment -segment_time 60 -segment_format_options movflags=+faststart -reset_timestamps 1 -strftime 1 "/chunks/\$folder/%Y-%m-%d_%H-%M-%S_chunk.mp4 \n\
+/usr/bin/ffmpeg -f flv -i $input_uri -c copy -flags +global_header -f segment -segment_time 60 -segment_format_options movflags=+faststart -reset_timestamps 1 -strftime 1 "/chunks/$folder/%Y-%m-%d_%H-%M-%S_chunk.mp4 \n\
 sleep 5 \n\
 done \n' >> /testav/ffmpegloop.sh
 
