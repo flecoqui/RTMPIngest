@@ -82,7 +82,7 @@ sleep 60 \n\
 done \n' > /testav/azcliloop.sh
 
 RUN chmod +x   /testav/azcliloop.sh
-RUN adduser testavuser --disabled-login
+#RUN adduser testavuser --disabled-login
 
 RUN echo '[Unit] \n\
 Description=Azcli Loop Service \n\
