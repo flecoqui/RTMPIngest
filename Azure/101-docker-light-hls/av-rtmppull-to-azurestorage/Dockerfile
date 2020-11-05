@@ -31,7 +31,7 @@ RUN wget https://aka.ms/downloadazcopy-v10-linux
 RUN tar -xvf downloadazcopy-v10-linux
 RUN cp ./azcopy_linux_amd64_*/azcopy /usr/bin/
 
-RUN echo 'input_uri="$INPUT_URI"\n\
+RUN echo 'input_uri="\$INPUT_URI"\n\
 while [ : ]\n\
   do\n\
 folder=\$(date  +"%F-%X.%S")\n\
