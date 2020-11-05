@@ -1,21 +1,14 @@
 # build image you need to run this command in the folder where the dockefile is stored
-docker build -t flecoqui/av-rtmppush-to-hlspull .
+docker build -t flecoqui/av-rtmppull-to-azurestorage .
 # run the container in your local docker
-docker run -p 80:80/tcp  -p 8080:8080/tcp   -p 1935:1935/tcp -d  flecoqui/av-rtmppush-to-hlspull
+docker run -p 80:80/tcp  -p 8080:8080/tcp   -p 1935:1935/tcp -d  flecoqui/av-rtmppull-to-azurestorage
 # run the container in your local docker  using port 1936 for RTMP
-docker run -p 80:80/tcp  -p 8080:8080/tcp   -p 1936:1936/tcp -e PORT_RTMP=1936 -d  flecoqui/av-rtmppush-to-hlspull
+docker run -p 80:80/tcp  -p 8080:8080/tcp   -p 1936:1936/tcp -e PORT_RTMP=1936 -d  flecoqui/av-rtmppull-to-azurestorage
 # debug the container in your local docker
-docker run -p 80:80/tcp  -p 8080:8080/tcp   -p 1935:1935/tcp -d -it flecoqui/av-rtmppush-to-hlspull /bin/bash
+docker run -p 80:80/tcp  -p 8080:8080/tcp   -p 1935:1935/tcp -d -it flecoqui/av-rtmppull-to-azurestorage /bin/bash
 # push image 
-docker push flecoqui/av-rtmppush-to-hlspull
+docker push flecoqui/av-rtmppull-to-azurestorage
 
-# ffmpeg command to generate rtmp stream on a laptop with a webcam
-ffmpeg.exe -v verbose -f dshow -i video="Integrated Webcam":audio="Microphone (Realtek(R) Audio)"  -video_size 1280x720 -strict -2 -c:a aac -b:a 192k -ar 44100 -r 30 -g 60 -keyint_min 60 -b:v 2000000 -c:v libx264 -preset veryfast  -profile main -level 3.0 -pix_fmt yuv420p -bufsize 1800k -maxrate 400k    -f flv rtmp://localhost:1936/live/stream
 
-# when the container is running and fed with rtmp feed, you can open the following urls:
-# App to play the hls stream
-http://<hostname>/player.html
-# HLS stream url
-http://<hostname>:8080/hls/stream.m3u8
  
  
