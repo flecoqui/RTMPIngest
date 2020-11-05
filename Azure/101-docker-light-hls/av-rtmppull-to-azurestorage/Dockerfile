@@ -57,9 +57,9 @@ WantedBy=multi-user.targetEOF\n\' > /etc/systemd/system/ffmpegloop.service
 
 
 
-RUN echo 'account=\"STORAGE_ACCOUNT\"\n\
-container=\"STORAGE_CONTAINER\"\n\
-sastoken=\"STORAGE_SASTOKEN\"\n\
+RUN echo 'account=$STORAGE_ACCOUNT \n\
+container=$STORAGE_CONTAINER \n\
+sastoken=$STORAGE_SASTOKEN \n\
 while [ : ]\n\
  do\n\
  for mp in /chunks/**/*.mp4\n\
@@ -85,15 +85,15 @@ RUN chmod +x   /testav/azcliloop.sh
 RUN adduser testavuser --disabled-login
 
 RUN echo '[Unit] \n\
-Description=Azcli Loop Service\n\
-After=network.target\n\
-[Service]\n\
-Type=simple\n\
-User=testrtmpuser\n\
-ExecStart=/bin/bash /testav/azcliloop.sh\n\
-Restart=on-abort\n\
-[Install]\n\
-WantedBy=multi-user.target\n\' > /etc/systemd/system/azcliloop.service
+Description=Azcli Loop Service \n\
+After=network.target \n\
+[Service] \n\
+Type=simple \n\
+User=testavuser \n\
+ExecStart=/bin/bash /testav/azcliloop.sh \n\
+Restart=on-abort \n\
+[Install] \n\
+WantedBy=multi-user.target \n\' > /etc/systemd/system/azcliloop.service
 
 
 COPY docker-entrypoint.sh /
