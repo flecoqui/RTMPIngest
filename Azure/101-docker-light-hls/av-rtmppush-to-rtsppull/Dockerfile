@@ -245,7 +245,7 @@ COPY --from=builder /usr/local/nginx/conf/scgi_params ./conf
 COPY --from=builder /usr/local/nginx/conf/scgi_params.default ./conf
 COPY --from=builder /usr/local/nginx/conf/nginx.conf ./conf
 COPY --from=builder /usr/local/nginx/conf/nginx.conf.default ./conf
-COPY --from=builder /usr/local/nginx/html/* ./conf/html
+COPY --from=builder /usr/local/nginx/html/* ./conf/html/
 
 RUN echo '<!DOCTYPE html>\n\
 <html lang="en">\n\

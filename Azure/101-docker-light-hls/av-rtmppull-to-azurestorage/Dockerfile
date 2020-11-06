@@ -15,7 +15,7 @@ RUN mkdir /git \
 && mkdir /testav \
 && mkdir /testav/log \
 && chmod +777 /testav/log \
-&& mkdir /testav/config
+&& mkdir /testav/config 
 
 # Install Azure CLI
 WORKDIR /git 
