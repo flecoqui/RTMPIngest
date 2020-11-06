@@ -1,11 +1,6 @@
-FROM ubuntu:18.04
+FROM ubuntu:18.04 As builder
 
 
-ENV HOSTNAME 127.0.0.1
-ENV PORT_HLS 8080
-ENV PORT_HTML 80
-ENV PORT_SSL 443
-ENV PORT_RTMP 1935
 
 # install git
 RUN apt-get -y update \
@@ -14,13 +9,6 @@ RUN apt-get -y update \
  && apt-get install -y wget \
  && apt-get install -y tar  
 
-# install Azure CLI
-RUN mkdir /git 
-RUN mkdir /temp
-RUN mkdir /testrtmp
-RUN mkdir /testrtmp/log
-RUN chmod +777 /testrtmp/log
-RUN mkdir /testrtmp/config
 
 WORKDIR /git 
 
@@ -40,9 +28,47 @@ RUN ./configure --add-module=/git/nginx-rtmp-module
 RUN make
 RUN make install
 
+FROM ubuntu:18.04 
 
-WORKDIR /
+ENV HOSTNAME 127.0.0.1
+ENV PORT_HLS 8080
+ENV PORT_HTML 80
+ENV PORT_SSL 443
+ENV PORT_RTMP 1935
 
+RUN mkdir /git \
+&& mkdir /temp \
+&& mkdir /testav \
+&& mkdir /testav/log \ 
+&& chmod +777 /testav/log \
+&& mkdir /testav/config
+
+
+RUN mkdir -p /usr/local/nginx \
+&& mkdir -p /usr/local/nginx/sbin \ 
+&& mkdir -p /usr/local/nginx/conf \ 
+&& mkdir -p /usr/local/nginx/logs \  
+&& mkdir -p /usr/local/nginx/html
+
+WORKDIR /usr/local/nginx
+
+COPY --from=builder /usr/local/nginx/sbin/nginx  ./sbin
+COPY --from=builder /usr/local/nginx/conf/koi-win  ./conf
+COPY --from=builder /usr/local/nginx/conf/koi-utf  ./conf
+COPY --from=builder /usr/local/nginx/conf/win-utf  ./conf
+COPY --from=builder /usr/local/nginx/conf/mime.types ./conf
+COPY --from=builder /usr/local/nginx/conf/mime.types.default ./conf
+COPY --from=builder /usr/local/nginx/conf/fastcgi_params ./conf
+COPY --from=builder /usr/local/nginx/conf/fastcgi_params.default ./conf
+COPY --from=builder /usr/local/nginx/conf/fastcgi.conf ./conf
+COPY --from=builder /usr/local/nginx/conf/fastcgi.conf.default ./conf
+COPY --from=builder /usr/local/nginx/conf/uwsgi_params ./conf
+COPY --from=builder /usr/local/nginx/conf/uwsgi_params.default ./conf
+COPY --from=builder /usr/local/nginx/conf/scgi_params ./conf
+COPY --from=builder /usr/local/nginx/conf/scgi_params.default ./conf
+COPY --from=builder /usr/local/nginx/conf/nginx.conf ./conf
+COPY --from=builder /usr/local/nginx/conf/nginx.conf.default ./conf
+COPY --from=builder /usr/local/nginx/html/* ./conf/html
 
 RUN echo '<!DOCTYPE html>\n\
 <html lang="en">\n\
@@ -68,7 +94,7 @@ RUN echo '<!DOCTYPE html>\n\
  </html>\n' > /usr/local/nginx/html/player.html
 
 RUN echo "worker_processes  1;\n\
-error_log  /testrtmp/log/nginxerror.log debug;\n\
+error_log  /testav/log/nginxerror.log debug;\n\
 events {\n\
     worker_connections  1024;\n\
  }\n\
@@ -140,16 +166,6 @@ rtmp {\n\
 
 ENV PATH="/usr/local/nginx/sbin:${PATH}"
 
-# EXPOSE $PORT_HLS
-# EXPOSE $PORT_HTML
-# EXPOSE $PORT_SSL
-# EXPOSE $PORT_RTMP
-
-#RUN ls /usr/local/nginx/sbin 
-#CMD ["/usr/local/nginx/sbin/nginx"]
-#CMD ["/bin/bash"]
-
-#RUN mkdir /docker-entrypoint.d
 COPY docker-entrypoint.sh /
 RUN chmod +755 /docker-entrypoint.sh 
 ENTRYPOINT ["/docker-entrypoint.sh"]
