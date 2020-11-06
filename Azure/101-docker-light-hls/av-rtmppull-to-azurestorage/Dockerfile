@@ -7,6 +7,16 @@ RUN apt-get -y update \
  && apt-get install -y lsof \
  && apt-get install -y ffmpeg 
 
+# Create folders 
+RUN mkdir /git \
+&& mkdir /temp \
+&& mkdir /chunks \
+&& chmod +777 /chunks \
+&& mkdir /testav \
+&& mkdir /testav/log \
+&& chmod +777 /testav/log \
+&& mkdir /testav/config
+
 # Install Azure CLI
 WORKDIR /git 
 RUN curl -sL https://aka.ms/InstallAzureCLIDeb | bash
@@ -81,15 +91,7 @@ ENV STORAGE_ACCOUNT "blobstoragebackup"
 ENV STORAGE_CONTAINER "testrtmp"
 ENV STORAGE_SASTOKEN "?sv=2019-10-10&st=2020-11-05T15%3A36%3A35Z&se=2030-11-06T15%3A36%3A00Z&sr=c&sp=racwdl&sig=Tuq0xBpej61AP0%2BJetD9cJBIOkaHrPCVgU4t60Vp7Rg%3D"
 
-# install Azure CLI
-RUN mkdir /git 
-RUN mkdir /temp
-RUN mkdir /chunks
-RUN chmod +777 /chunks
-RUN mkdir /testav
-RUN mkdir /testav/log
-RUN chmod +777 /testav/log
-RUN mkdir /testav/config
+
 
 COPY docker-entrypoint.sh /
 RUN chmod +755 /docker-entrypoint.sh 
