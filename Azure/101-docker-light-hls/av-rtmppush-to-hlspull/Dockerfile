@@ -69,8 +69,10 @@ COPY --from=builder /usr/local/nginx/conf/scgi_params.default ./conf
 COPY --from=builder /usr/local/nginx/conf/nginx.conf ./conf
 COPY --from=builder /usr/local/nginx/conf/nginx.conf.default ./conf
 COPY --from=builder /usr/local/nginx/html/* ./conf/html/
-COPY --from=builder /usr/lib/* /usr/lib/
-COPY --from=builder /usr/lib/x86_64-linux-gnu/* /usr/lib/x86_64-linux-gnu/
+COPY --from=builder /usr/lib/*.so.* /usr/lib/
+COPY --from=builder /usr/lib/x86_64-linux-gnu/*.so.* /usr/lib/x86_64-linux-gnu/
+
+
 
 
 RUN echo '<!DOCTYPE html>\n\
