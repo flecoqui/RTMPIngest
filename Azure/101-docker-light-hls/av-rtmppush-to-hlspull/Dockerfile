@@ -69,6 +69,7 @@ COPY --from=builder /usr/local/nginx/conf/scgi_params.default ./conf
 COPY --from=builder /usr/local/nginx/conf/nginx.conf ./conf
 COPY --from=builder /usr/local/nginx/conf/nginx.conf.default ./conf
 COPY --from=builder /usr/local/nginx/html/* ./conf/html/
+COPY --from=builder /usr/lib/*.so.* /usr/lib/
 
 RUN echo '<!DOCTYPE html>\n\
 <html lang="en">\n\
