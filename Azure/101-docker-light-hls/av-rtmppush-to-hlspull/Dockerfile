@@ -16,9 +16,9 @@ WORKDIR /git
 RUN apt-get -y install build-essential curl g++
 # Download source code
 WORKDIR /git
-RUN apt-get -y install libpcre3 libpcre3-dev
-RUN apt-get -y install libssl-dev
-RUN apt-get -y install zlib1g-dev
+RUN apt-get -y install libpcre3 libpcre3-dev \
+&& apt-get -y install libssl-dev \
+&& apt-get -y install zlib1g-dev
 #git clone https://github.com/nginx/nginx.git
 RUN wget http://nginx.org/download/nginx-1.16.1.tar.gz
 RUN tar xvfz nginx-1.16.1.tar.gz
@@ -43,12 +43,16 @@ RUN mkdir /git \
 && chmod +777 /testav/log \
 && mkdir /testav/config
 
-
 RUN mkdir -p /usr/local/nginx \
 && mkdir -p /usr/local/nginx/sbin \ 
 && mkdir -p /usr/local/nginx/conf \ 
 && mkdir -p /usr/local/nginx/logs \  
 && mkdir -p /usr/local/nginx/html
+
+RUN apt-get -y install libpcre3 libpcre3-dev \
+&& apt-get -y install libssl-dev \
+&& apt-get -y install zlib1g-dev
+
 
 WORKDIR /usr/local/nginx
 
@@ -69,11 +73,6 @@ COPY --from=builder /usr/local/nginx/conf/scgi_params.default ./conf
 COPY --from=builder /usr/local/nginx/conf/nginx.conf ./conf
 COPY --from=builder /usr/local/nginx/conf/nginx.conf.default ./conf
 COPY --from=builder /usr/local/nginx/html/* ./conf/html/
-COPY --from=builder /usr/lib/*.so.* /usr/lib/
-COPY --from=builder /usr/lib/x86_64-linux-gnu/*.so.* /usr/lib/x86_64-linux-gnu/
-
-
-
 
 RUN echo '<!DOCTYPE html>\n\
 <html lang="en">\n\
