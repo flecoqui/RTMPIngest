@@ -217,8 +217,7 @@ ENV PATH="/usr/local/nginx/sbin:${PATH}"
 
 WORKDIR /
 COPY sample_640x360.mp4 /sample_640x360.mp4
-RUN mkdir /git \
-&& mkdir /git/gst-rtsp-server \
+RUN  mkdir /git/gst-rtsp-server \
 && mkdir /git/gst-rtsp-server/builddir \
 && mkdir /git/gst-rtsp-server/builddir/examples/
 COPY --from=builder /git/gst-rtsp-server/builddir/examples/test-uri  /git/gst-rtsp-server/builddir/examples/
