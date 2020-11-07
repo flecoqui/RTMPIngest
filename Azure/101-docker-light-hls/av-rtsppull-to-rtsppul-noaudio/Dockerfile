@@ -49,16 +49,7 @@ RUN  apt-get -y install python3 python3-pip python3-setuptools \
                        python3-wheel ninja-build
 RUN pip3 install meson
 WORKDIR /git
-#git clone https://github.com/nginx/nginx.git
-RUN wget http://nginx.org/download/nginx-1.16.1.tar.gz
-RUN tar xvfz nginx-1.16.1.tar.gz
-RUN git clone https://github.com/arut/nginx-rtmp-module.git 
-WORKDIR /git/nginx-1.16.1
-RUN ls -l
-# RUN ./configure --with-http_ssl_module --add-module=/git/nginx-rtmp-module
-RUN ./configure --add-module=/git/nginx-rtmp-module
-RUN make
-RUN make install
+
 
 WORKDIR /git
 # Get the gst-rtsp-server source and build
@@ -75,7 +66,6 @@ RUN meson builddir
 RUN ninja -C builddir
 WORKDIR /git/gst-rtsp-server/builddir
 RUN meson compile
-
 
 
 FROM ubuntu:18.04 
