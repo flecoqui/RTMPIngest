@@ -229,6 +229,7 @@ RUN  mkdir /git/gst-rtsp-server \
 && mkdir /git/gst-rtsp-server/builddir/examples/
 COPY --from=builder /git/gst-rtsp-server/builddir/examples/test-uri  /git/gst-rtsp-server/builddir/examples/
 COPY --from=builder /git/gst-rtsp-server/builddir/gst/rtsp-server/*  /git/gst-rtsp-server/builddir/examples/
+RUN ls -l /git/gst-rtsp-server/builddir/examples
 
 EXPOSE 7001/udp $PORT_RTMP/tcp $PORT_HLS/tcp 8554/tcp 8554/udp
 
