@@ -77,6 +77,8 @@ WORKDIR /git/gst-rtsp-server/builddir
 RUN meson compile
 
 RUN ls -l /git/gst-rtsp-server/builddir/gst/rtsp-server
+RUN ls -l /usr/lib/x86_64-linux-gnu/
+RUN ls -l /lib/x86_64-linux-gnu/
 
 FROM ubuntu:18.04 
 
@@ -230,6 +232,7 @@ RUN  mkdir /git/gst-rtsp-server \
 COPY --from=builder /git/gst-rtsp-server/builddir/examples/test-uri  /git/gst-rtsp-server/builddir/examples/
 COPY --from=builder /git/gst-rtsp-server/builddir/gst/rtsp-server/*  /git/gst-rtsp-server/builddir/examples/
 COPY --from=builder /git/gst-rtsp-server/builddir/gst/rtsp-server/libgstrtspserver*  /lib/x86_64-linux-gnu/
+COPY --from=builder /usr/lib/x86_64-linux-gnu/libgstrtsp* /lib/x86_64-linux-gnu/
 COPY --from=builder /usr/lib/x86_64-linux-gnu/libglib* /lib/x86_64-linux-gnu/
 COPY --from=builder /usr/lib/x86_64-linux-gnu/libgstreamer* /lib/x86_64-linux-gnu/
 COPY --from=builder /usr/lib/x86_64-linux-gnu/libgobject*  /lib/x86_64-linux-gnu/
