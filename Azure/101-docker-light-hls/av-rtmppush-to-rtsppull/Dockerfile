@@ -76,7 +76,7 @@ RUN ninja -C builddir
 WORKDIR /git/gst-rtsp-server/builddir
 RUN meson compile
 
-RUN ls -l WORKDIR /git/gst-rtsp-server/builddir
+RUN ls -l /git/gst-rtsp-server/builddir/gst/rtsp-server
 
 FROM ubuntu:18.04 
 
