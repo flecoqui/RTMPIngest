@@ -18,10 +18,10 @@ RUN apt-get -y update \
 # install Azure CLI
 RUN mkdir /git 
 RUN mkdir /temp
-RUN mkdir /testav
-RUN mkdir /testav/log
-RUN chmod +777 /testav/log
-RUN mkdir /testav/config
+RUN mkdir /testrtmp
+RUN mkdir /testrtmp/log
+RUN chmod +777 /testrtmp/log
+RUN mkdir /testrtmp/config
 
 WORKDIR /git 
 
@@ -116,7 +116,7 @@ RUN echo '<!DOCTYPE html>\n\
  </html>\n' > /usr/local/nginx/html/player.html
 
 RUN echo "worker_processes  1;\n\
-error_log  /testav/log/nginxerror.log debug;\n\
+error_log  /testrtmp/log/nginxerror.log debug;\n\
 events {\n\
     worker_connections  1024;\n\
  }\n\
