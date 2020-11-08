@@ -247,6 +247,6 @@ RUN chmod +755 /docker-entrypoint.sh
 ENTRYPOINT ["/docker-entrypoint.sh"]
 
 
-STOPSIGNAL SIGTERM
+#STOPSIGNAL SIGTERM
 
-CMD ["nginx", "-g", "daemon off;"]
+#CMD ["nginx", "-g", "daemon off;"]
