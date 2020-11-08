@@ -76,6 +76,8 @@ RUN ninja -C builddir
 WORKDIR /git/gst-rtsp-server/builddir
 RUN meson compile
 
+RUN ls -l WORKDIR /git/gst-rtsp-server/builddir
+
 FROM ubuntu:18.04 
 
 ENV HOSTNAME 127.0.0.1
