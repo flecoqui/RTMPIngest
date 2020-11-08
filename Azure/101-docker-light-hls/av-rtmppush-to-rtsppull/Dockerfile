@@ -1,8 +1,12 @@
-FROM ubuntu:18.04 As builder
+FROM ubuntu:18.04
 # set DEBIAN_FRONTEND for tzdata installation 
 RUN DEBIAN_FRONTEND="noninteractive"
 
-
+ENV HOSTNAME 127.0.0.1
+ENV PORT_HLS 8080
+ENV PORT_HTML 80
+ENV PORT_SSL 443
+ENV PORT_RTMP 1935
 
 # install git
 RUN apt-get -y update \
@@ -11,6 +15,7 @@ RUN apt-get -y update \
  && apt-get install -y wget \
  && apt-get install -y tar  
 
+# install Azure CLI
 RUN mkdir /git 
 RUN mkdir /temp
 RUN mkdir /testav
@@ -49,7 +54,7 @@ RUN wget http://nginx.org/download/nginx-1.16.1.tar.gz
 RUN tar xvfz nginx-1.16.1.tar.gz
 RUN git clone https://github.com/arut/nginx-rtmp-module.git 
 WORKDIR /git/nginx-1.16.1
-
+RUN ls -l
 # RUN ./configure --with-http_ssl_module --add-module=/git/nginx-rtmp-module
 RUN ./configure --add-module=/git/nginx-rtmp-module
 RUN make
@@ -68,63 +73,25 @@ RUN apt-get -y install gstreamer1.0-tools gstreamer1.0-alsa gstreamer1.0-plugins
 
 # RUN ./autogen.sh --noconfigure && GST_PLUGINS_GOOD_DIR=$(pkg-config --variable=pluginsdir gstreamer-plugins-bad-1.0) ./configure && make
 # RUN GST_PLUGINS_GOOD_DIR=$(pkg-config --variable=pluginsdir gstreamer-1.0) 
+RUN ls -l /usr/lib/x86_64-linux-gnu/
 RUN meson configure -Doption=examples -Doption=tests  
 RUN meson builddir
 RUN ninja -C builddir
 WORKDIR /git/gst-rtsp-server/builddir
 RUN meson compile
-
-FROM ubuntu:18.04 
-
-ENV HOSTNAME 127.0.0.1
-ENV PORT_HLS 8080
-ENV PORT_HTML 80
-ENV PORT_SSL 443
-ENV PORT_RTMP 1935
-
-
-RUN mkdir /git \
-&& mkdir /temp \
-&& mkdir /testav \
-&& mkdir /testav/log \ 
-&& chmod +777 /testav/log \
-&& mkdir /testav/config
-
-
-RUN mkdir -p /usr/local/nginx \
-&& mkdir -p /usr/local/nginx/sbin \ 
-&& mkdir -p /usr/local/nginx/conf \ 
-&& mkdir -p /usr/local/nginx/logs \  
-&& mkdir -p /usr/local/nginx/html
-
-RUN apt-get -y update \  
-&& apt-get -y install libpcre3 libpcre3-dev \
-&& apt-get -y install libssl-dev \
-&& apt-get -y install zlib1g-dev
-
-RUN DEBIAN_FRONTEND="noninteractive" apt-get -y install tzdata
-RUN apt-get -y install gstreamer1.0-tools gstreamer1.0-alsa gstreamer1.0-plugins-base gstreamer1.0-plugins-good gstreamer1.0-plugins-bad gstreamer1.0-plugins-ugly gstreamer1.0-libav  libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev libgstreamer-plugins-bad1.0-dev
-
-WORKDIR /usr/local/nginx
-
-COPY --from=builder /usr/local/nginx/sbin/nginx  ./sbin
-COPY --from=builder /usr/local/nginx/conf/koi-win  ./conf
-COPY --from=builder /usr/local/nginx/conf/koi-utf  ./conf
-COPY --from=builder /usr/local/nginx/conf/win-utf  ./conf
-COPY --from=builder /usr/local/nginx/conf/mime.types ./conf
-COPY --from=builder /usr/local/nginx/conf/mime.types.default ./conf
-COPY --from=builder /usr/local/nginx/conf/fastcgi_params ./conf
-COPY --from=builder /usr/local/nginx/conf/fastcgi_params.default ./conf
-COPY --from=builder /usr/local/nginx/conf/fastcgi.conf ./conf
-COPY --from=builder /usr/local/nginx/conf/fastcgi.conf.default ./conf
-COPY --from=builder /usr/local/nginx/conf/uwsgi_params ./conf
-COPY --from=builder /usr/local/nginx/conf/uwsgi_params.default ./conf
-COPY --from=builder /usr/local/nginx/conf/scgi_params ./conf
-COPY --from=builder /usr/local/nginx/conf/scgi_params.default ./conf
-COPY --from=builder /usr/local/nginx/conf/nginx.conf ./conf
-COPY --from=builder /usr/local/nginx/conf/nginx.conf.default ./conf
-COPY --from=builder /usr/local/nginx/html/* ./conf/html/
-
+WORKDIR /git/gst-rtsp-server/examples/
+RUN ls -l /git/gst-rtsp-server/examples
+RUN ls -l /git/gst-rtsp-server/builddir/examples
+RUN find /git/gst-rtsp-server -name test-uri*
+RUN find /git -name test-uri*
+#RUN meson builddir
+#RUN ninja -C builddir
+#RUN ls -l /git/gst-rtsp-server/examples/builddir
+#WORKDIR /git/gst-rtsp-server/examples/builddir
+#RUN meson compile
+#RUN ls -l /git/gst-rtsp-server/examples
+WORKDIR /
+COPY sample_640x360.mp4 /sample_640x360.mp4
 RUN echo '<!DOCTYPE html>\n\
 <html lang="en">\n\
 <head>\n\
@@ -221,25 +188,17 @@ rtmp {\n\
 
 ENV PATH="/usr/local/nginx/sbin:${PATH}"
 
-WORKDIR /
-COPY sample_640x360.mp4 /sample_640x360.mp4
-RUN  mkdir /git/gst-rtsp-server \
-&& mkdir /git/gst-rtsp-server/builddir \
-&& mkdir /git/gst-rtsp-server/builddir/examples/
-COPY --from=builder /git/gst-rtsp-server/builddir/examples/test-uri  /git/gst-rtsp-server/builddir/examples/
-COPY --from=builder /git/gst-rtsp-server/builddir/gst/rtsp-server/*  /git/gst-rtsp-server/builddir/examples/
-COPY --from=builder /git/gst-rtsp-server/builddir/gst/rtsp-server/libgstrtspserver*  /lib/x86_64-linux-gnu/
-COPY --from=builder /usr/lib/x86_64-linux-gnu/libgstrtsp* /lib/x86_64-linux-gnu/
-COPY --from=builder /usr/lib/x86_64-linux-gnu/libglib* /lib/x86_64-linux-gnu/
-COPY --from=builder /usr/lib/x86_64-linux-gnu/libgstreamer* /lib/x86_64-linux-gnu/
-COPY --from=builder /usr/lib/x86_64-linux-gnu/libgobject*  /lib/x86_64-linux-gnu/
-COPY --from=builder /usr/lib/x86_64-linux-gnu/libgstsdp*  /lib/x86_64-linux-gnu/
-COPY --from=builder /usr/lib/x86_64-linux-gnu/libgio*  /lib/x86_64-linux-gnu/
-COPY --from=builder /usr/lib/x86_64-linux-gnu/libgst*  /lib/x86_64-linux-gnu/
-COPY --from=builder /usr/lib/x86_64-linux-gnu/libgmodule*  /lib/x86_64-linux-gnu/
-
+# EXPOSE $PORT_HLS
+# EXPOSE $PORT_HTML
+# EXPOSE $PORT_SSL
+# EXPOSE $PORT_RTMP
 EXPOSE 7001/udp $PORT_RTMP/tcp $PORT_HLS/tcp 8554/tcp 8554/udp
 
+#RUN ls /usr/local/nginx/sbin 
+#CMD ["/usr/local/nginx/sbin/nginx"]
+#CMD ["/bin/bash"]
+
+#RUN mkdir /docker-entrypoint.d
 COPY docker-entrypoint.sh /
 RUN chmod +755 /docker-entrypoint.sh 
 ENTRYPOINT ["/docker-entrypoint.sh"]
