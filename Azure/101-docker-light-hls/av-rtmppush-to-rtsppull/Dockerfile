@@ -103,9 +103,9 @@ RUN apt-get -y update \
 && apt-get -y install zlib1g-dev
 
 RUN DEBIAN_FRONTEND="noninteractive" apt-get -y install tzdata
-#RUN apt-get -y install gstreamer1.0-tools gstreamer1.0-alsa gstreamer1.0-plugins-base gstreamer1.0-plugins-good gstreamer1.0-plugins-bad gstreamer1.0-plugins-ugly gstreamer1.0-libav  libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev libgstreamer-plugins-bad1.0-dev
+RUN apt-get -y install gstreamer1.0-tools gstreamer1.0-alsa gstreamer1.0-plugins-base gstreamer1.0-plugins-good gstreamer1.0-plugins-bad gstreamer1.0-plugins-ugly gstreamer1.0-libav  libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev libgstreamer-plugins-bad1.0-dev
 #RUN apt-get -y install gstreamer1.0-tools  gstreamer1.0-plugins-base  gstreamer1.0-libav  libgstreamer1.0-dev
-RUN apt-get -y install gstreamer1.0-plugins-base  gstreamer1.0-libav   
+#RUN apt-get -y install gstreamer1.0-plugins-base  gstreamer1.0-libav   
 
 WORKDIR /usr/local/nginx
 
