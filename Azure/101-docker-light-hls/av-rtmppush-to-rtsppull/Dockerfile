@@ -229,7 +229,7 @@ RUN  mkdir /git/gst-rtsp-server \
 && mkdir /git/gst-rtsp-server/builddir/examples/
 COPY --from=builder /git/gst-rtsp-server/builddir/examples/test-uri  /git/gst-rtsp-server/builddir/examples/
 COPY --from=builder /git/gst-rtsp-server/builddir/gst/rtsp-server/*  /git/gst-rtsp-server/builddir/examples/
-COPY --from=builder /git/gst-rtsp-server/builddir/gst/rtsp-server/*  /usr/local/lib
+COPY --from=builder /git/gst-rtsp-server/builddir/gst/rtsp-server/*  /usr/local/lib/
 RUN ls -l /usr/local/lib
 RUN ls -l /lib
 
