@@ -237,6 +237,8 @@ COPY --from=builder /usr/lib/x86_64-linux-gnu/libglib* /lib/x86_64-linux-gnu/
 COPY --from=builder /usr/lib/x86_64-linux-gnu/libgstreamer* /lib/x86_64-linux-gnu/
 COPY --from=builder /usr/lib/x86_64-linux-gnu/libgobject*  /lib/x86_64-linux-gnu/
 
+RUN ls -l /lib/x86_64-linux-gnu/lib*
+
 EXPOSE 7001/udp $PORT_RTMP/tcp $PORT_HLS/tcp 8554/tcp 8554/udp
 
 COPY docker-entrypoint.sh /
