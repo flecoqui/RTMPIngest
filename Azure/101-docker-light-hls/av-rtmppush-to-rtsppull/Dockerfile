@@ -236,6 +236,7 @@ COPY --from=builder /usr/lib/x86_64-linux-gnu/libgstrtsp* /lib/x86_64-linux-gnu/
 COPY --from=builder /usr/lib/x86_64-linux-gnu/libglib* /lib/x86_64-linux-gnu/
 COPY --from=builder /usr/lib/x86_64-linux-gnu/libgstreamer* /lib/x86_64-linux-gnu/
 COPY --from=builder /usr/lib/x86_64-linux-gnu/libgobject*  /lib/x86_64-linux-gnu/
+COPY --from=builder /usr/lib/x86_64-linux-gnu/libgstsdp*  /lib/x86_64-linux-gnu/
 
 RUN ls -l /lib/x86_64-linux-gnu/lib*
 
