@@ -230,7 +230,7 @@ RUN  mkdir /git/gst-rtsp-server \
 COPY --from=builder /git/gst-rtsp-server/builddir/examples/test-uri  /git/gst-rtsp-server/builddir/examples/
 COPY --from=builder /git/gst-rtsp-server/builddir/gst/rtsp-server/*  /git/gst-rtsp-server/builddir/examples/
 COPY --from=builder /git/gst-rtsp-server/builddir/gst/rtsp-server/libgstrtspserver*  /lib/x86_64-linux-gnu/
-COPY --from=builder /lib/x86_64-linux-gnu/libglib* /lib/x86_64-linux-gnu/
+COPY --from=builder /usr/lib/x86_64-linux-gnu/libglib* /lib/x86_64-linux-gnu/
 RUN ls -l /usr/local/lib
 RUN ls -l /lib/x86_64-linux-gnu/
 
