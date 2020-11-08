@@ -11,13 +11,12 @@ RUN apt-get -y update \
  && apt-get install -y wget \
  && apt-get install -y tar  
 
-# install Azure CLI
 RUN mkdir /git 
 RUN mkdir /temp
-RUN mkdir /testrtmp
-RUN mkdir /testrtmp/log
-RUN chmod +777 /testrtmp/log
-RUN mkdir /testrtmp/config
+RUN mkdir /testav
+RUN mkdir /testav/log
+RUN chmod +777 /testav/log
+RUN mkdir /testav/config
 
 WORKDIR /git 
 

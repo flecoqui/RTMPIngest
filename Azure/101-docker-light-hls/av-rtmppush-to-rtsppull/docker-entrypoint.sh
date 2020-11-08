@@ -32,7 +32,7 @@ echo '<!DOCTYPE html>
  </html>' > /usr/local/nginx/html/player.html
 
 echo "worker_processes  1;
-error_log  /testrtmp/log/nginxerror.log debug;
+error_log  /testav/log/nginxerror.log debug;
 events {
     worker_connections  1024;
  }
