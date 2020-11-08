@@ -49,7 +49,7 @@ RUN wget http://nginx.org/download/nginx-1.16.1.tar.gz
 RUN tar xvfz nginx-1.16.1.tar.gz
 RUN git clone https://github.com/arut/nginx-rtmp-module.git 
 WORKDIR /git/nginx-1.16.1
-RUN ls -l
+
 # RUN ./configure --with-http_ssl_module --add-module=/git/nginx-rtmp-module
 RUN ./configure --add-module=/git/nginx-rtmp-module
 RUN make
@@ -68,16 +68,11 @@ RUN apt-get -y install gstreamer1.0-tools gstreamer1.0-alsa gstreamer1.0-plugins
 
 # RUN ./autogen.sh --noconfigure && GST_PLUGINS_GOOD_DIR=$(pkg-config --variable=pluginsdir gstreamer-plugins-bad-1.0) ./configure && make
 # RUN GST_PLUGINS_GOOD_DIR=$(pkg-config --variable=pluginsdir gstreamer-1.0) 
-RUN ls -l /usr/lib/x86_64-linux-gnu/
 RUN meson configure -Doption=examples -Doption=tests  
 RUN meson builddir
 RUN ninja -C builddir
 WORKDIR /git/gst-rtsp-server/builddir
 RUN meson compile
-
-RUN ls -l /git/gst-rtsp-server/builddir/gst/rtsp-server
-RUN ls -l /usr/lib/x86_64-linux-gnu/
-RUN ls -l /lib/x86_64-linux-gnu/
 
 FROM ubuntu:18.04 
 
@@ -239,8 +234,6 @@ COPY --from=builder /usr/lib/x86_64-linux-gnu/libgstsdp*  /lib/x86_64-linux-gnu/
 COPY --from=builder /usr/lib/x86_64-linux-gnu/libgio*  /lib/x86_64-linux-gnu/
 COPY --from=builder /usr/lib/x86_64-linux-gnu/libgst*  /lib/x86_64-linux-gnu/
 COPY --from=builder /usr/lib/x86_64-linux-gnu/libgmodule*  /lib/x86_64-linux-gnu/
-
-RUN ls -l /lib/x86_64-linux-gnu/lib*
 
 EXPOSE 7001/udp $PORT_RTMP/tcp $PORT_HLS/tcp 8554/tcp 8554/udp
 
