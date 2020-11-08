@@ -99,6 +99,11 @@ RUN mkdir -p /usr/local/nginx \
 && mkdir -p /usr/local/nginx/logs \  
 && mkdir -p /usr/local/nginx/html
 
+RUN apt-get -y update \  
+&& apt-get -y install libpcre3 libpcre3-dev \
+&& apt-get -y install libssl-dev \
+&& apt-get -y install zlib1g-dev
+
 WORKDIR /usr/local/nginx
 
 COPY --from=builder /usr/local/nginx/sbin/nginx  ./sbin
