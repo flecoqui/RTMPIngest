@@ -103,6 +103,7 @@ rtmp {
 }" > /usr/local/nginx/conf/nginx.conf
 exec /usr/local/nginx/sbin/nginx -g "daemon off;" &
 #exec /git/gst-rtsp-server/builddir/examples/test-uri rtmp://127.0.0.1:$PORT_RTMP/live/stream
+export GST_DEBUG=2
 exec /rtspserver http://127.0.0.1:$PORT_HLS/hls/stream.m3u8
 
 exec "$@"
