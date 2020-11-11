@@ -32,17 +32,17 @@ RUN apt-get -y install libgtk2.0-dev
 RUN apt-get -y install autoconf
 RUN apt-get -y install pkg-config
 
-#RUN wget https://github.com/Kitware/CMake/releases/download/v3.15.2/cmake-3.15.2.tar.gz
-#RUN tar -zxvf cmake-3.15.2.tar.gz
-#WORKDIR /git/cmake-3.15.2
-#RUN ./bootstrap
-#RUN make
-#RUN make install
+RUN wget https://github.com/Kitware/CMake/releases/download/v3.15.2/cmake-3.15.2.tar.gz
+RUN tar -zxvf cmake-3.15.2.tar.gz
+WORKDIR /git/cmake-3.15.2
+RUN ./bootstrap
+RUN make
+RUN make install
 
 #RUN apt-get -y install meson
-#RUN  apt-get -y install python3 python3-pip python3-setuptools \
-#                       python3-wheel ninja-build
-#RUN pip3 install meson
+RUN  apt-get -y install python3 python3-pip python3-setuptools \
+                       python3-wheel ninja-build
+RUN pip3 install meson
 WORKDIR /git
 #git clone https://github.com/nginx/nginx.git
 RUN wget http://nginx.org/download/nginx-1.16.1.tar.gz
@@ -52,42 +52,27 @@ WORKDIR /git/nginx-1.16.1
 
 # RUN ./configure --with-http_ssl_module --add-module=/git/nginx-rtmp-module
 RUN ./configure --add-module=/git/nginx-rtmp-module
-# build nginx rtmp server
 RUN make
-# install nginx rtmp server
 RUN make install
 
-
-# install gstreamer components
-RUN apt-get -y install libgstreamer1.0-0 gstreamer1.0-plugins-base gstreamer1.0-plugins-good \
-     gstreamer1.0-plugins-bad gstreamer1.0-plugins-ugly gstreamer1.0-libav gstreamer1.0-doc \
-    gstreamer1.0-tools gstreamer1.0-x gstreamer1.0-alsa gstreamer1.0-gl gstreamer1.0-gtk3 \
-    gstreamer1.0-qt5 gstreamer1.0-pulseaudio
-# install gstreamer rtsp server
-RUN apt-get -y install libgstrtspserver-1.0
-
-# build rtspserver
 WORKDIR /git
-COPY rtspserver.c /git/rtspserver.c
-RUN  gcc  rtspserver.c -o rtspserver -I/usr/include/gstreamer-1.0/  -L/usr/lib/x86_64-linux-gnu `pkg-config --cflags --libs gstreamer-1.0 gstreamer-rtsp-server-1.0 gstreamer-rtsp-1.0`
-
 # Get the gst-rtsp-server source and build
-#RUN git clone https://github.com/GStreamer/gst-rtsp-server.git
-#WORKDIR /git/gst-rtsp-server
-#RUN git checkout remotes/origin/1.14
+RUN git clone https://github.com/GStreamer/gst-rtsp-server.git
+WORKDIR /git/gst-rtsp-server
+RUN git checkout remotes/origin/1.14
 # current main branch uses meson build, I did not want to figure that out... so 1.16
 # RUN git checkout origin/1.16
 #RUN apt-get -y install  gstreamer0.10-plugins-good
-#RUN DEBIAN_FRONTEND="noninteractive" apt-get -y install tzdata
-#RUN apt-get -y install gstreamer1.0-tools gstreamer1.0-alsa gstreamer1.0-plugins-base gstreamer1.0-plugins-good gstreamer1.0-plugins-bad gstreamer1.0-plugins-ugly gstreamer1.0-libav  libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev libgstreamer-plugins-bad1.0-dev
+RUN DEBIAN_FRONTEND="noninteractive" apt-get -y install tzdata
+RUN apt-get -y install gstreamer1.0-tools gstreamer1.0-alsa gstreamer1.0-plugins-base gstreamer1.0-plugins-good gstreamer1.0-plugins-bad gstreamer1.0-plugins-ugly gstreamer1.0-libav  libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev libgstreamer-plugins-bad1.0-dev
 
 # RUN ./autogen.sh --noconfigure && GST_PLUGINS_GOOD_DIR=$(pkg-config --variable=pluginsdir gstreamer-plugins-bad-1.0) ./configure && make
 # RUN GST_PLUGINS_GOOD_DIR=$(pkg-config --variable=pluginsdir gstreamer-1.0) 
-#RUN meson configure -Doption=examples -Doption=tests  
-#RUN meson builddir
-#RUN ninja -C builddir
-#WORKDIR /git/gst-rtsp-server/builddir
-#RUN meson compile
+RUN meson configure -Doption=examples -Doption=tests  
+RUN meson builddir
+RUN ninja -C builddir
+WORKDIR /git/gst-rtsp-server/builddir
+RUN meson compile
 
 FROM ubuntu:18.04 
 
@@ -117,16 +102,8 @@ RUN apt-get -y update \
 && apt-get -y install libssl-dev \
 && apt-get -y install zlib1g-dev
 
-# install gstreamer components
-RUN apt-get -y install libgstreamer1.0-0 gstreamer1.0-plugins-base gstreamer1.0-plugins-good \
-     gstreamer1.0-plugins-bad gstreamer1.0-plugins-ugly gstreamer1.0-libav gstreamer1.0-doc \
-    gstreamer1.0-tools gstreamer1.0-x gstreamer1.0-alsa gstreamer1.0-gl gstreamer1.0-gtk3 \
-    gstreamer1.0-qt5 gstreamer1.0-pulseaudio
-# install gstreamer rtsp server
-RUN apt-get -y install libgstrtspserver-1.0
-
-#RUN DEBIAN_FRONTEND="noninteractive" apt-get -y install tzdata
-#RUN apt-get -y install gstreamer1.0-tools gstreamer1.0-alsa gstreamer1.0-plugins-base gstreamer1.0-plugins-good gstreamer1.0-plugins-bad gstreamer1.0-plugins-ugly gstreamer1.0-libav  libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev libgstreamer-plugins-bad1.0-dev
+RUN DEBIAN_FRONTEND="noninteractive" apt-get -y install tzdata
+RUN apt-get -y install gstreamer1.0-tools gstreamer1.0-alsa gstreamer1.0-plugins-base gstreamer1.0-plugins-good gstreamer1.0-plugins-bad gstreamer1.0-plugins-ugly gstreamer1.0-libav  libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev libgstreamer-plugins-bad1.0-dev
 #RUN apt-get -y install gstreamer1.0-tools  gstreamer1.0-plugins-base  gstreamer1.0-libav  libgstreamer1.0-dev
 #RUN apt-get -y install gstreamer1.0-plugins-base  gstreamer1.0-libav   
 
@@ -246,26 +223,22 @@ rtmp {\n\
 
 ENV PATH="/usr/local/nginx/sbin:${PATH}"
 
-WORKDIR /usr/local/nginx
-
 WORKDIR /
 COPY sample_640x360.mp4 /sample_640x360.mp4
-COPY --from=builder /git/rtspserver  /rtspserver
-
-#RUN  mkdir /git/gst-rtsp-server \
-#&& mkdir /git/gst-rtsp-server/builddir \
-#&& mkdir /git/gst-rtsp-server/builddir/examples/
-#COPY --from=builder /git/gst-rtsp-server/builddir/examples/test-uri  /git/gst-rtsp-server/builddir/examples/
-#COPY --from=builder /git/gst-rtsp-server/builddir/gst/rtsp-server/*  /git/gst-rtsp-server/builddir/examples/
-#COPY --from=builder /git/gst-rtsp-server/builddir/gst/rtsp-server/libgstrtspserver*  /lib/x86_64-linux-gnu/
-#COPY --from=builder /usr/lib/x86_64-linux-gnu/libgstrtsp* /lib/x86_64-linux-gnu/
-#COPY --from=builder /usr/lib/x86_64-linux-gnu/libglib* /lib/x86_64-linux-gnu/
-#COPY --from=builder /usr/lib/x86_64-linux-gnu/libgstreamer* /lib/x86_64-linux-gnu/
-#COPY --from=builder /usr/lib/x86_64-linux-gnu/libgobject*  /lib/x86_64-linux-gnu/
-#COPY --from=builder /usr/lib/x86_64-linux-gnu/libgstsdp*  /lib/x86_64-linux-gnu/
-#COPY --from=builder /usr/lib/x86_64-linux-gnu/libgio*  /lib/x86_64-linux-gnu/
-#COPY --from=builder /usr/lib/x86_64-linux-gnu/libgst*  /lib/x86_64-linux-gnu/
-#COPY --from=builder /usr/lib/x86_64-linux-gnu/libgmodule*  /lib/x86_64-linux-gnu/
+RUN  mkdir /git/gst-rtsp-server \
+&& mkdir /git/gst-rtsp-server/builddir \
+&& mkdir /git/gst-rtsp-server/builddir/examples/
+COPY --from=builder /git/gst-rtsp-server/builddir/examples/test-uri  /git/gst-rtsp-server/builddir/examples/
+COPY --from=builder /git/gst-rtsp-server/builddir/gst/rtsp-server/*  /git/gst-rtsp-server/builddir/examples/
+COPY --from=builder /git/gst-rtsp-server/builddir/gst/rtsp-server/libgstrtspserver*  /lib/x86_64-linux-gnu/
+COPY --from=builder /usr/lib/x86_64-linux-gnu/libgstrtsp* /lib/x86_64-linux-gnu/
+COPY --from=builder /usr/lib/x86_64-linux-gnu/libglib* /lib/x86_64-linux-gnu/
+COPY --from=builder /usr/lib/x86_64-linux-gnu/libgstreamer* /lib/x86_64-linux-gnu/
+COPY --from=builder /usr/lib/x86_64-linux-gnu/libgobject*  /lib/x86_64-linux-gnu/
+COPY --from=builder /usr/lib/x86_64-linux-gnu/libgstsdp*  /lib/x86_64-linux-gnu/
+COPY --from=builder /usr/lib/x86_64-linux-gnu/libgio*  /lib/x86_64-linux-gnu/
+COPY --from=builder /usr/lib/x86_64-linux-gnu/libgst*  /lib/x86_64-linux-gnu/
+COPY --from=builder /usr/lib/x86_64-linux-gnu/libgmodule*  /lib/x86_64-linux-gnu/
 
 EXPOSE 7001/udp $PORT_RTMP/tcp $PORT_HLS/tcp 8554/tcp 8554/udp
 
