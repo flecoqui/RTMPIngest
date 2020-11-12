@@ -191,6 +191,9 @@ COPY --from=builder /usr/lib/x86_64-linux-gnu/libffi.so.6  /lib
 COPY --from=builder /lib/x86_64-linux-gnu/libselinux.so.1 /lib
 COPY --from=builder /lib/x86_64-linux-gnu/libresolv.so.2 /lib
 COPY --from=builder /lib/x86_64-linux-gnu/libmount.so.1 /lib
+COPY --from=builder /lib/x86_64-linux-gnu/ld-linux-x86-64.so.2 /lib
+COPY --from=builder /lib/x86_64-linux-gnu/libblkid.so.1 /lib
+COPY --from=builder /lib/x86_64-linux-gnu/ld-linux-x86-64.so.2 /lib
 
 RUN echo '<!DOCTYPE html>\n\
 <html lang="en">\n\
