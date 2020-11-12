@@ -318,7 +318,7 @@ EXPOSE 7001/udp $PORT_RTMP/tcp $PORT_HLS/tcp 8554/tcp 8554/udp
 COPY docker-entrypoint.sh /
 RUN chmod 0755 /docker-entrypoint.sh 
 #ENTRYPOINT ["/docker-entrypoint.sh"]
-
+RUN export CGO_ENABLED=0
 RUN apk add --no-cache bash
 CMD ["@"]
 #ENTRYPOINT ["/bin/sh"]
