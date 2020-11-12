@@ -2,35 +2,29 @@ FROM ubuntu:18.04 As builder
 # set DEBIAN_FRONTEND for tzdata installation 
 RUN DEBIAN_FRONTEND="noninteractive"
 
-
-
 # install git
 RUN apt-get -y update \
  && apt-get install -y git \
  && apt-get install -y curl \
  && apt-get install -y wget \
- && apt-get install -y tar  
+ && apt-get install -y tar  \
+ && apt-get -y install build-essential curl g++ \
+ && apt-get -y install libpcre3 libpcre3-dev \
+ && apt-get -y install libssl-dev \
+ && apt-get -y install zlib1g-dev \
+ && apt-get -y install libglib2.0-dev \
+ && apt-get -y install libgtk2.0-dev \
+ && apt-get -y install autoconf \
+ && apt-get -y install pkg-config 
 
-RUN mkdir /git 
-RUN mkdir /temp
-RUN mkdir /testav
-RUN mkdir /testav/log
-RUN chmod +777 /testav/log
-RUN mkdir /testav/config
+RUN mkdir /git  \
+ && mkdir /temp \
+ && mkdir /testav \
+ && mkdir /testav/log \
+ && chmod +777 /testav/log \
+ && mkdir /testav/config
 
-WORKDIR /git 
-
-# install pre-requisites
-RUN apt-get -y install build-essential curl g++
-# Download source code
-WORKDIR /git
-RUN apt-get -y install libpcre3 libpcre3-dev
-RUN apt-get -y install libssl-dev
-RUN apt-get -y install zlib1g-dev
-RUN apt-get -y install libglib2.0-dev
-RUN apt-get -y install libgtk2.0-dev
-RUN apt-get -y install autoconf
-RUN apt-get -y install pkg-config
+#WORKDIR /git 
 
 #RUN wget https://github.com/Kitware/CMake/releases/download/v3.15.2/cmake-3.15.2.tar.gz
 #RUN tar -zxvf cmake-3.15.2.tar.gz
@@ -48,24 +42,33 @@ WORKDIR /git
 RUN wget http://nginx.org/download/nginx-1.16.1.tar.gz
 RUN tar xvfz nginx-1.16.1.tar.gz
 RUN git clone https://github.com/arut/nginx-rtmp-module.git 
+
 WORKDIR /git/nginx-1.16.1
 
 # RUN ./configure --with-http_ssl_module --add-module=/git/nginx-rtmp-module
-RUN ./configure --add-module=/git/nginx-rtmp-module
+RUN ./configure --add-module=/git/nginx-rtmp-module \
 # build nginx rtmp server
-RUN make
+&& make \
 # install nginx rtmp server
-RUN make install
+&& make install
 
 
 # install gstreamer components
 RUN apt-get -y update \
-    && apt-get -y install libgstreamer1.0-0 gstreamer1.0-plugins-base gstreamer1.0-plugins-good \
-     gstreamer1.0-plugins-bad gstreamer1.0-plugins-ugly gstreamer1.0-libav  \
-    gstreamer1.0-tools gstreamer1.0-x gstreamer1.0-alsa  gstreamer1.0-pulseaudio
+    && apt-get -y install libgstreamer1.0-0 \
+    && apt-get -y install gstreamer1.0-plugins-bad \
+    && apt-get -y install gstreamer1.0-plugins-base \ 
+    && apt-get -y install gstreamer1.0-plugins-good \
+    && apt-get -y install gstreamer1.0-plugins-ugly \
+    && apt-get -y install gstreamer1.0-libav  \
+    && apt-get -y install gstreamer1.0-tools \
+    && apt-get -y install gstreamer1.0-x \
+    && apt-get -y install gstreamer1.0-alsa \
+    && apt-get -y install gstreamer1.0-pulseaudio \
+    && apt-get -y install libgstrtspserver-1.0
 
 # install gstreamer rtsp server
-RUN apt-get -y install libgstrtspserver-1.0
+# RUN apt-get -y install libgstrtspserver-1.0
 
 # build rtspserver
 WORKDIR /git
@@ -122,10 +125,20 @@ RUN mkdir /git \
 #    gstreamer1.0-tools gstreamer1.0-x gstreamer1.0-alsa gstreamer1.0-gl gstreamer1.0-gtk3 \
 #    gstreamer1.0-qt5 gstreamer1.0-pulseaudio
 
+#RUN apt-get -y update \
+#    && apt-get -y install libgstreamer1.0-0 gstreamer1.0-plugins-base gstreamer1.0-plugins-good \
+#     gstreamer1.0-plugins-bad gstreamer1.0 libgstrtspserver-1.0
+
 RUN apt-get -y update \
-    && apt-get -y install libgstreamer1.0-0 gstreamer1.0-plugins-base gstreamer1.0-plugins-good \
-     gstreamer1.0-plugins-bad gstreamer1.0 libgstrtspserver-1.0
-     
+    && apt-get -y install libgstreamer1.0-0 \
+    && apt-get -y install gstreamer1.0-plugins-bad \
+    && apt-get -y install gstreamer1.0-plugins-base \ 
+    && apt-get -y install gstreamer1.0-plugins-good \
+    && apt-get -y install gstreamer1.0-plugins-ugly \
+    && apt-get -y install gstreamer1.0-libav  \
+    && apt-get -y install gstreamer1.0-x \
+    && apt-get -y install libgstrtspserver-1.0
+
 #      gstreamer1.0-plugins-ugly gstreamer1.0-libav  \
 #    gstreamer1.0-tools gstreamer1.0-x gstreamer1.0-alsa  gstreamer1.0-pulseaudio
 
