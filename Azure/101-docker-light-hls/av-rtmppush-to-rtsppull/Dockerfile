@@ -93,7 +93,7 @@ RUN  gcc  rtspserver.c -o rtspserver -I/usr/include/gstreamer-1.0/  -L/usr/lib/x
 #WORKDIR /git/gst-rtsp-server/builddir
 #RUN meson compile
 
-FROM ubuntu:18.04 
+FROM alpine:3.7 
 
 ENV HOSTNAME 127.0.0.1
 ENV PORT_HLS 8080
