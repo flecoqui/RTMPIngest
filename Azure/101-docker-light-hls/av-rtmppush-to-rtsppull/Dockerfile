@@ -179,6 +179,16 @@ COPY --from=builder /usr/lib/x86_64-linux-gnu/libgstrtspserver-1.0.so.0 /lib
 COPY --from=builder /usr/lib/x86_64-linux-gnu/libgstreamer-1.0.so.0 /lib
 COPY --from=builder /usr/lib/x86_64-linux-gnu/libgobject-2.0.so.0 /lib
 COPY --from=builder /usr/lib/x86_64-linux-gnu/libglib-2.0.so.0 /lib
+COPY --from=builder /usr/lib/x86_64-linux-gnu/libgstnet-1.0.so.0 /lib
+COPY --from=builder /usr/lib/x86_64-linux-gnu/libgstbase-1.0.so.0 /lib
+COPY --from=builder /usr/lib/x86_64-linux-gnu/libgstrtp-1.0.so.0  /lib
+COPY --from=builder /usr/lib/x86_64-linux-gnu/libgstrtsp-1.0.so.0 /lib
+COPY --from=builder /usr/lib/x86_64-linux-gnu/libgstsdp-1.0.so.0 /lib
+COPY --from=builder /usr/lib/x86_64-linux-gnu/libgstapp-1.0.so.0 /lib
+COPY --from=builder /usr/lib/x86_64-linux-gnu/libgio-2.0.so.0 /lib
+COPY --from=builder /usr/lib/x86_64-linux-gnu/libgmodule-2.0.so.0  /lib
+COPY --from=builder /usr/lib/x86_64-linux-gnu/libffi.so.6  /lib
+
 
 
 RUN echo '<!DOCTYPE html>\n\
