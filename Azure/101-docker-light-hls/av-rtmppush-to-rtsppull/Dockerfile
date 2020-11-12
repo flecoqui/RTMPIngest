@@ -106,7 +106,7 @@ RUN mkdir /git \
 && mkdir /temp \
 && mkdir /testav \
 && mkdir /testav/log \ 
-&& chmod +777 /testav/log \
+&& chmod 0777 /testav/log \
 && mkdir /testav/config \
 && mkdir -p /usr/local/nginx \
 && mkdir -p /usr/local/nginx/sbin \ 
@@ -290,7 +290,7 @@ COPY --from=builder /git/rtspserver  /rtspserver
 EXPOSE 7001/udp $PORT_RTMP/tcp $PORT_HLS/tcp 8554/tcp 8554/udp
 
 COPY docker-entrypoint.sh /
-RUN chmod +755 /docker-entrypoint.sh 
+RUN chmod 0755 /docker-entrypoint.sh 
 ENTRYPOINT ["/docker-entrypoint.sh"]
 
 
