@@ -194,6 +194,7 @@ COPY --from=builder /lib/x86_64-linux-gnu/libmount.so.1 /lib
 COPY --from=builder /lib/x86_64-linux-gnu/ld-linux-x86-64.so.2 /lib
 COPY --from=builder /lib/x86_64-linux-gnu/libblkid.so.1 /lib
 COPY --from=builder /lib/x86_64-linux-gnu/ld-linux-x86-64.so.2 /lib
+COPY --from=builder /lib/x86_64-linux-gnu/libuuid.so.1 /lib
 
 RUN echo '<!DOCTYPE html>\n\
 <html lang="en">\n\
