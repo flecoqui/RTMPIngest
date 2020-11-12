@@ -294,7 +294,8 @@ RUN chmod 0755 /docker-entrypoint.sh
 #ENTRYPOINT ["/docker-entrypoint.sh"]
 
 RUN apk add --no-cache bash
-ENTRYPOINT ["/bin/sh"]
+CMD ["@"]
+#ENTRYPOINT ["/bin/sh"]
 
 #STOPSIGNAL SIGTERM
 
