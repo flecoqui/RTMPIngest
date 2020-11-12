@@ -74,7 +74,7 @@ RUN apt-get -y update \
 WORKDIR /git
 COPY rtspserver.c /git/rtspserver.c
 RUN  gcc  rtspserver.c -o rtspserver -I/usr/include/gstreamer-1.0/  -L/usr/lib/x86_64-linux-gnu `pkg-config --cflags --libs gstreamer-1.0 gstreamer-rtsp-server-1.0 gstreamer-rtsp-1.0`
-RUN ls -l /lib/x86_64-linux-gnu/
+RUN ls -l /usr/lib/x86_64-linux-gnu/
 
 # Get the gst-rtsp-server source and build
 #RUN git clone https://github.com/GStreamer/gst-rtsp-server.git
@@ -170,10 +170,10 @@ COPY --from=builder /usr/local/nginx/conf/scgi_params.default ./conf
 COPY --from=builder /usr/local/nginx/conf/nginx.conf ./conf
 COPY --from=builder /usr/local/nginx/conf/nginx.conf.default ./conf
 COPY --from=builder /usr/local/nginx/html/* ./conf/html/
-COPY --from=builder /usr/lib/x86_64-linux-gnu/libcrypt.so.1 /lib 
-COPY --from=builder /usr/lib/x86_64-linux-gnu/libpcre.so.3 /lib
-COPY --from=builder /usr/lib/x86_64-linux-gnu/libssl.so.1.1 /lib
-COPY --from=builder /usr/lib/x86_64-linux-gnu/libcrypto.so.1.1 /lib
+COPY --from=builder /lib/x86_64-linux-gnu/libcrypt.so.1 /lib 
+COPY --from=builder /lib/x86_64-linux-gnu/libpcre.so.3 /lib
+COPY --from=builder /lib/x86_64-linux-gnu/libssl.so.1.1 /lib
+COPY --from=builder /lib/x86_64-linux-gnu/libcrypto.so.1.1 /lib
 COPY --from=builder /usr/lib/x86_64-linux-gnu/libgstrtspserver-1.0.so.0 /lib
 COPY --from=builder /usr/lib/x86_64-linux-gnu/libgstreamer-1.0.so.0 /lib
 COPY --from=builder /usr/lib/x86_64-linux-gnu/libgobject-2.0.so.0 /lib
