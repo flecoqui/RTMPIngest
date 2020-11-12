@@ -95,7 +95,7 @@ RUN ls -l /usr/lib/x86_64-linux-gnu/
 #WORKDIR /git/gst-rtsp-server/builddir
 #RUN meson compile
 
-FROM alpine:3.7 
+FROM alpine:3.12
 
 ENV HOSTNAME 127.0.0.1
 ENV PORT_HLS 8080
