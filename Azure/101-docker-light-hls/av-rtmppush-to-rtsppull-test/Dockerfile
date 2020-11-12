@@ -37,13 +37,13 @@ RUN mkdir /git \
 #     gstreamer1.0-plugins-bad gstreamer1.0 libgstrtspserver-1.0
 
 RUN apt-get -y update \
- #   && apt-get -y install libgstreamer1.0-0 \
+    && apt-get -y install libgstreamer1.0-0 \
  #   && apt-get -y install gstreamer1.0-plugins-bad \
  #   && apt-get -y install gstreamer1.0-plugins-base \ 
  #   && apt-get -y install gstreamer1.0-plugins-good \
  #   && apt-get -y install gstreamer1.0-plugins-ugly \
  #   && apt-get -y install gstreamer1.0-libav  \
-    && apt-get -y install gstreamer1.0 \
+ #   && apt-get -y install gstreamer1.0 \
     && apt-get -y install libgstrtspserver-1.0
 
 #      gstreamer1.0-plugins-ugly gstreamer1.0-libav  \
