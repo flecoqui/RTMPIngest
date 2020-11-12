@@ -74,8 +74,6 @@ RUN apt-get -y update \
 WORKDIR /git
 COPY rtspserver.c /git/rtspserver.c
 RUN  gcc  rtspserver.c -o rtspserver -I/usr/include/gstreamer-1.0/  -L/usr/lib/x86_64-linux-gnu `pkg-config --cflags --libs gstreamer-1.0 gstreamer-rtsp-server-1.0 gstreamer-rtsp-1.0`
-RUN ls -l /lib/x86_64-linux-gnu/
-RUN ls -l /usr/lib/x86_64-linux-gnu/
 
 # Get the gst-rtsp-server source and build
 #RUN git clone https://github.com/GStreamer/gst-rtsp-server.git
@@ -95,7 +93,7 @@ RUN ls -l /usr/lib/x86_64-linux-gnu/
 #WORKDIR /git/gst-rtsp-server/builddir
 #RUN meson compile
 
-FROM alpine:3.12
+FROM ubuntu:18.04
 
 ENV HOSTNAME 127.0.0.1
 ENV PORT_HLS 8080
@@ -120,8 +118,8 @@ RUN mkdir /git \
 #&& apt-get -y install libssl-dev \
 #&& apt-get -y install zlib1g-dev
 
-RUN export CGO_ENABLED=0
-RUN apk add --no-cache bash
+#RUN export CGO_ENABLED=0
+#RUN apk add --no-cache bash
 
 # install gstreamer components
 #RUN apt-get -y install libgstreamer1.0-0 gstreamer1.0-plugins-base gstreamer1.0-plugins-good \
@@ -133,15 +131,15 @@ RUN apk add --no-cache bash
 #    && apt-get -y install libgstreamer1.0-0 gstreamer1.0-plugins-base gstreamer1.0-plugins-good \
 #     gstreamer1.0-plugins-bad gstreamer1.0 libgstrtspserver-1.0
 
-#RUN apt-get -y update \
-#    && apt-get -y install libgstreamer1.0-0 \
-#    && apt-get -y install gstreamer1.0-plugins-bad \
-#    && apt-get -y install gstreamer1.0-plugins-base \ 
-#    && apt-get -y install gstreamer1.0-plugins-good \
-#    && apt-get -y install gstreamer1.0-plugins-ugly \
-#    && apt-get -y install gstreamer1.0-libav  \
-#    && apt-get -y install gstreamer1.0-x \
-#    && apt-get -y install libgstrtspserver-1.0
+RUN apt-get -y update \
+    && apt-get -y install libgstreamer1.0-0 \
+    && apt-get -y install gstreamer1.0-plugins-bad \
+    && apt-get -y install gstreamer1.0-plugins-base \ 
+    && apt-get -y install gstreamer1.0-plugins-good \
+    && apt-get -y install gstreamer1.0-plugins-ugly \
+    && apt-get -y install gstreamer1.0-libav  \
+    && apt-get -y install gstreamer1.0-x \
+    && apt-get -y install libgstrtspserver-1.0
 
 #      gstreamer1.0-plugins-ugly gstreamer1.0-libav  \
 #    gstreamer1.0-tools gstreamer1.0-x gstreamer1.0-alsa  gstreamer1.0-pulseaudio
@@ -154,8 +152,8 @@ RUN apk add --no-cache bash
 #RUN apt-get -y install gstreamer1.0-tools  gstreamer1.0-plugins-base  gstreamer1.0-libav  libgstreamer1.0-dev
 #RUN apt-get -y install gstreamer1.0-plugins-base  gstreamer1.0-libav   
 
-RUN apk add nginx
-RUN apk add gstreamer
+#RUN apk add nginx
+#RUN apk add gstreamer
 WORKDIR /usr/local/nginx
 
 COPY --from=builder /usr/local/nginx/sbin/nginx  ./sbin
@@ -298,8 +296,6 @@ rtmp {\n\
 
 ENV PATH="/usr/local/nginx/sbin:${PATH}"
 
-WORKDIR /usr/local/nginx
-
 WORKDIR /
 COPY sample_640x360.mp4 /sample_640x360.mp4
 COPY --from=builder /git/rtspserver  /rtspserver
@@ -323,9 +319,9 @@ EXPOSE 7001/udp $PORT_RTMP/tcp $PORT_HLS/tcp 8554/tcp 8554/udp
 
 COPY docker-entrypoint.sh /
 RUN chmod 0755 /docker-entrypoint.sh 
-#ENTRYPOINT ["/docker-entrypoint.sh"]
+ENTRYPOINT ["/docker-entrypoint.sh"]
 
-CMD ["@"]
+#CMD ["@"]
 #ENTRYPOINT ["/bin/sh"]
 
 #STOPSIGNAL SIGTERM
