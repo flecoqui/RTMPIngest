@@ -169,6 +169,15 @@ COPY --from=builder /usr/local/nginx/conf/scgi_params.default ./conf
 COPY --from=builder /usr/local/nginx/conf/nginx.conf ./conf
 COPY --from=builder /usr/local/nginx/conf/nginx.conf.default ./conf
 COPY --from=builder /usr/local/nginx/html/* ./conf/html/
+COPY --from=builder /usr/lib/x86_64-linux-gnu/libcrypt.so.1 /lib 
+COPY --from=builder /usr/lib/x86_64-linux-gnu/libpcre.so.3 /lib
+COPY --from=builder /usr/lib/x86_64-linux-gnu/libssl.so.1.1 /lib
+COPY --from=builder /usr/lib/x86_64-linux-gnu/libcrypto.so.1.1 /lib
+COPY --from=builder /usr/lib/x86_64-linux-gnu/libgstrtspserver-1.0.so.0 /lib
+COPY --from=builder /usr/lib/x86_64-linux-gnu/libgstreamer-1.0.so.0 /lib
+COPY --from=builder /usr/lib/x86_64-linux-gnu/libgobject-2.0.so.0 /lib
+COPY --from=builder /usr/lib/x86_64-linux-gnu/libglib-2.0.so.0 /lib
+
 
 RUN echo '<!DOCTYPE html>\n\
 <html lang="en">\n\
