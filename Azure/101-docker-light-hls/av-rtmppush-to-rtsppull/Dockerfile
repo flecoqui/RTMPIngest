@@ -188,9 +188,9 @@ COPY --from=builder /usr/lib/x86_64-linux-gnu/libgstapp-1.0.so.0 /lib
 COPY --from=builder /usr/lib/x86_64-linux-gnu/libgio-2.0.so.0 /lib
 COPY --from=builder /usr/lib/x86_64-linux-gnu/libgmodule-2.0.so.0  /lib
 COPY --from=builder /usr/lib/x86_64-linux-gnu/libffi.so.6  /lib
-COPY --from=builder /usr/lib/x86_64-linux-gnu/libselinux.so.1 /lib
-COPY --from=builder /usr/lib/x86_64-linux-gnu/libresolv.so.2 /lib
-COPY --from=builder /usr/lib/x86_64-linux-gnu/libmount.so.1 /lib
+COPY --from=builder /lib/x86_64-linux-gnu/libselinux.so.1 /lib
+COPY --from=builder /lib/x86_64-linux-gnu/libresolv.so.2 /lib
+COPY --from=builder /lib/x86_64-linux-gnu/libmount.so.1 /lib
 
 RUN echo '<!DOCTYPE html>\n\
 <html lang="en">\n\
