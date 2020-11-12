@@ -104,19 +104,17 @@ RUN mkdir /git \
 && mkdir /testav \
 && mkdir /testav/log \ 
 && chmod +777 /testav/log \
-&& mkdir /testav/config
-
-
-RUN mkdir -p /usr/local/nginx \
+&& mkdir /testav/config \
+&& mkdir -p /usr/local/nginx \
 && mkdir -p /usr/local/nginx/sbin \ 
 && mkdir -p /usr/local/nginx/conf \ 
 && mkdir -p /usr/local/nginx/logs \  
-&& mkdir -p /usr/local/nginx/html
+&& mkdir -p /usr/local/nginx/html 
+#&& apt-get -y update   
+#&& apt-get -y install libpcre3 libpcre3-dev \
+#&& apt-get -y install libssl-dev \
+#&& apt-get -y install zlib1g-dev
 
-RUN apt-get -y update \  
-&& apt-get -y install libpcre3 libpcre3-dev \
-&& apt-get -y install libssl-dev \
-&& apt-get -y install zlib1g-dev
 
 # install gstreamer components
 #RUN apt-get -y install libgstreamer1.0-0 gstreamer1.0-plugins-base gstreamer1.0-plugins-good \
@@ -126,11 +124,13 @@ RUN apt-get -y update \
 
 RUN apt-get -y update \
     && apt-get -y install libgstreamer1.0-0 gstreamer1.0-plugins-base gstreamer1.0-plugins-good \
-     gstreamer1.0-plugins-bad gstreamer1.0-plugins-ugly gstreamer1.0-libav  \
-    gstreamer1.0-tools gstreamer1.0-x gstreamer1.0-alsa  gstreamer1.0-pulseaudio
+     gstreamer1.0-plugins-bad gstreamer1.0 libgstrtspserver-1.0
+     
+#      gstreamer1.0-plugins-ugly gstreamer1.0-libav  \
+#    gstreamer1.0-tools gstreamer1.0-x gstreamer1.0-alsa  gstreamer1.0-pulseaudio
 
 # install gstreamer rtsp server
-RUN apt-get -y install libgstrtspserver-1.0
+# RUN apt-get -y install libgstrtspserver-1.0
 
 #RUN DEBIAN_FRONTEND="noninteractive" apt-get -y install tzdata
 #RUN apt-get -y install gstreamer1.0-tools gstreamer1.0-alsa gstreamer1.0-plugins-base gstreamer1.0-plugins-good gstreamer1.0-plugins-bad gstreamer1.0-plugins-ugly gstreamer1.0-libav  libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev libgstreamer-plugins-bad1.0-dev
