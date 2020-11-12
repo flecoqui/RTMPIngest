@@ -154,6 +154,8 @@ RUN apk add --no-cache bash
 #RUN apt-get -y install gstreamer1.0-tools  gstreamer1.0-plugins-base  gstreamer1.0-libav  libgstreamer1.0-dev
 #RUN apt-get -y install gstreamer1.0-plugins-base  gstreamer1.0-libav   
 
+RUN apk add nginx
+RUN apk add gstreamer
 WORKDIR /usr/local/nginx
 
 COPY --from=builder /usr/local/nginx/sbin/nginx  ./sbin
