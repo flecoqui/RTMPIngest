@@ -11,7 +11,7 @@ This template allows you to deploy from Github a Live RTMP Ingester hosted on Az
 - the HLS stream generated from the incoming RTMP stream
 - the RTMP stream generated from the incoming RTMP stream
 - the RTSP stream generated from the incoming RTMP stream
-- 
+  
 As this template doesn't build FFMPEG from the source code, the deployment should take around 20 minutes to build NGINX RTMP.
 
 
