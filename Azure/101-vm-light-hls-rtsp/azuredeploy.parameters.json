@@ -3,13 +3,13 @@
   "contentVersion": "1.0.0.0",
   "parameters": {
     "namePrefix": {
-      "value": "testrtmplinux"
+      "value": "testrtmprtsp"
     },
     "vmAdminUsername": {
-      "value": "VMAdmin"
+      "value": "yourlogin"
     },
     "vmAdminPassword": {
-      "value": "VMP@ssw0rd"
+      "value": "yourpassword"
     },
     "vmOS": {
       "value": "ubuntu"
@@ -21,7 +21,7 @@
       "value": "live/stream"
     },
     "containerName": {
-      "value": "rtmpcontainer"
+      "value": "rtmprtspcontainer"
     },
     "expiryDate": {
       "value": "2025-01-01T00:00:01Z"
