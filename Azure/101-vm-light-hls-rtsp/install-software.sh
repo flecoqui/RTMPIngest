@@ -127,7 +127,8 @@ install_rtsp(){
 cd /git
 wget https://github.com/aler9/rtsp-simple-server/releases/download/v0.12.2/rtsp-simple-server_v0.12.2_linux_amd64.tar.gz
 tar xvfz rtsp-simple-server_v0.12.2_linux_amd64.tar.gz
-cp ./rtsp-simple-server* /usr/bin/
+cp ./rtsp-simple-server /usr/bin/
+cp ./rtsp-simple-server.yml /usr/bin/
 log "rtsp-simple-server installed"
 }
 
@@ -938,7 +939,8 @@ else
 		install_ffmpeg_service_centos $rtmp_path
 		install_nginx_rtmp_service_centos $azure_hostname
 		install_rtsp_service
-		install_azcli_service_centos $storage_account  $storage_container   $storage_sas_token
+		install_ffmpegrtsp_service
+        install_azcli_service_centos $storage_account  $storage_container   $storage_sas_token
 	    log "Start nginx_rtmp service"
         systemctl stop nginx
         systemctl start nginx
@@ -947,7 +949,8 @@ else
 		install_ffmpeg_service_centos $rtmp_path
 		install_nginx_rtmp_service_centos $azure_hostname
 		install_rtsp_service
-		install_azcli_service_centos $storage_account  $storage_container   $storage_sas_token
+		install_ffmpegrtsp_service
+        install_azcli_service_centos $storage_account  $storage_container   $storage_sas_token
 	    log "Start nginx_rtmp service"
         systemctl stop nginx
         systemctl start nginx
@@ -956,6 +959,7 @@ else
 		install_ffmpeg_service $rtmp_path
 		install_nginx_rtmp_service $azure_hostname
 		install_rtsp_service
+        install_ffmpegrtsp_service
 		install_azcli_service $storage_account  $storage_container   $storage_sas_token
 	    log "Start nginx_rtmp service"
 	    /usr/local/nginx/sbin/nginx -s stop
@@ -965,6 +969,7 @@ else
 		install_ffmpeg_service $rtmp_path
 		install_nginx_rtmp_service $azure_hostname
 		install_rtsp_service
+        install_ffmpegrtsp_service
 		install_azcli_service $storage_account  $storage_container   $storage_sas_token
 	    log "Start nginx_rtmp service"
 	    /usr/local/nginx/sbin/nginx -s stop
