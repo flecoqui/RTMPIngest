@@ -1,0 +1,30 @@
+{
+  "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "namePrefix": {
+      "value": "testrtmplinux"
+    },
+    "vmAdminUsername": {
+      "value": "VMAdmin"
+    },
+    "vmAdminPassword": {
+      "value": "VMP@ssw0rd"
+    },
+    "vmOS": {
+      "value": "ubuntu"
+    },
+    "vmSize": {
+      "value": "Small"
+    },
+    "rtmpPath": {
+      "value": "live/stream"
+    },
+    "containerName": {
+      "value": "rtmpcontainer"
+    },
+    "expiryDate": {
+      "value": "2025-01-01T00:00:01Z"
+    }
+  }
+}

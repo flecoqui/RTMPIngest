@@ -57,6 +57,9 @@ configure_network(){
 # firewall configuration 
 iptables -A INPUT -p tcp --dport 80 -j ACCEPT
 iptables -A INPUT -p tcp --dport 8080 -j ACCEPT
+iptables -A INPUT -p tcp --dport 8554 -j ACCEPT
+iptables -A INPUT -p udp --dport 8554 -j ACCEPT
+iptables -A INPUT -p udp --dport 7001 -j ACCEPT
 iptables -A INPUT -p tcp --dport 443 -j ACCEPT
 iptables -A INPUT -p tcp --dport 1935 -j ACCEPT
 }
@@ -65,6 +68,9 @@ configure_network_centos(){
 # firewall configuration 
 iptables -A INPUT -p tcp --dport 80 -j ACCEPT
 iptables -A INPUT -p tcp --dport 8080 -j ACCEPT
+iptables -A INPUT -p tcp --dport 8554 -j ACCEPT
+iptables -A INPUT -p udp --dport 8554 -j ACCEPT
+iptables -A INPUT -p udp --dport 7001 -j ACCEPT
 iptables -A INPUT -p tcp --dport 443 -j ACCEPT
 iptables -A INPUT -p tcp --dport 1935 -j ACCEPT
 
@@ -74,6 +80,9 @@ firewall-cmd --permanent --add-port=80/tcp
 firewall-cmd --permanent --add-port=8080/tcp
 firewall-cmd --permanent --add-port=443/tcp
 firewall-cmd --permanent --add-port=1935/tcp
+firewall-cmd --permanent --add-port=8554/tcp
+firewall-cmd --permanent --add-port=8554/udp
+firewall-cmd --permanent --add-port=7001/udp
 firewall-cmd --reload
 }
 
@@ -113,6 +122,14 @@ make install
 log "nginx_rtmp installed"
 
 }
+#############################################################################
+install_rtsp(){
+wget https://github.com/aler9/rtsp-simple-server/releases/download/v0.12.2/rtsp-simple-server_v0.12.2_linux_amd64.tar.gz
+tar xvfz rtsp-simple-server_v0.12.2_linux_amd64.tar.gz
+sudo cp ./rtsp-simple-server* /usr/bin/
+log "rtsp-simple-server installed"
+}
+
 install_nginx_rtmp_centos(){
 # install pre-requisites
 yum -y groupinstall 'Development Tools'
@@ -356,6 +373,66 @@ WantedBy=multi-user.target
 EOF
 }
 
+#############################################################################
+install_rtsp_service(){
+cat <<EOF > /testrtmp/rtsploop.sh
+while [ : ]
+do
+folder=\$(date  +"%F-%X.%S")
+echo Starting rtsp loop \$folder >> /testrtmp/log/rtsp.log
+/usr/bin/rtsp-simple-server
+sleep 5
+done
+EOF
+
+chmod +x   /testrtmp/rtsploop.sh
+adduser testrtmpuser --disabled-login
+
+cat <<EOF > /etc/systemd/system/rtsploop.service
+[Unit]
+Description=rtsp Loop Service
+After=network.target
+
+[Service]
+Type=simple
+User=testrtmpuser
+ExecStart=/bin/sh /testrtmp/rtsploop.sh
+Restart=on-abort
+
+[Install]
+WantedBy=multi-user.target
+EOF
+}
+#############################################################################
+install_ffmpegrtsp_service(){
+cat <<EOF > /testrtmp/ffmpegrtsploop.sh
+while [ : ]
+do
+folder=\$(date  +"%F-%X.%S")
+echo Starting rtsp loop \$folder >> /testrtmp/log/ffmpegrtsp.log
+ffmpeg  -i rtmp://127.0.0.1:1935/live/stream  -framerate 25 -video_size 640x480  -pix_fmt yuv420p -bsf:v h264_mp4toannexb -profile:v baseline -level:v 3.2 -c:v libx264 -x264-params keyint=120:scenecut=0 -c:a aac -b:a 128k -ar 44100 -f rtsp -muxdelay 0.1 rtsp://127.0.0.1:8554/test
+sleep 5
+done
+EOF
+
+chmod +x   /testrtmp/ffmpegrtsploop.sh
+adduser testrtmpuser --disabled-login
+
+cat <<EOF > /etc/systemd/system/ffmpegrtsploop.service
+[Unit]
+Description=rtsp Loop Service
+After=network.target
+
+[Service]
+Type=simple
+User=testrtmpuser
+ExecStart=/bin/sh /testrtmp/ffmpegrtsploop.sh
+Restart=on-abort
+
+[Install]
+WantedBy=multi-user.target
+EOF
+}
 
 install_ffmpeg_service_centos(){
 cat <<EOF > /testrtmp/ffmpegloop.sh
@@ -839,19 +916,19 @@ else
 	    log "build ffmpeg nginx_rtmp centos"
 		install_ffmpeg_centos
 		install_nginx_rtmp_centos
-#		install_azcopy_centos
+		install_rtsp
 		install_azcli_centos
 	elif [ $isredhat -eq 0 ] ; then
 	    log "build ffmpeg nginx_rtmp redhat"
 		install_ffmpeg_redhat
 		install_nginx_rtmp_centos
-#		install_azcopy_centos
+		install_rtsp
 		install_azcli_centos
 	else
 	    log "build ffmpeg nginx_rtmp debian ubuntu"
 		install_ffmpeg
 		install_nginx_rtmp
-#		install_azcopy
+		install_rtsp
 		install_azcli
 	fi
 
@@ -859,7 +936,7 @@ else
 	    log "install ffmpeg nginx_rtmp azcli centos"
 		install_ffmpeg_service_centos $rtmp_path
 		install_nginx_rtmp_service_centos $azure_hostname
-#		install_azcopy_service $storage_account_prefix  $storage_sas_token
+		install_rtsp_service
 		install_azcli_service_centos $storage_account  $storage_container   $storage_sas_token
 	    log "Start nginx_rtmp service"
         systemctl stop nginx
@@ -868,7 +945,7 @@ else
 	    log "install ffmpeg nginx_rtmp azcli redhat"
 		install_ffmpeg_service_centos $rtmp_path
 		install_nginx_rtmp_service_centos $azure_hostname
-#		install_azcopy_service $storage_account_prefix  $storage_sas_token
+		install_rtsp_service
 		install_azcli_service_centos $storage_account  $storage_container   $storage_sas_token
 	    log "Start nginx_rtmp service"
         systemctl stop nginx
@@ -877,7 +954,7 @@ else
 	    log "install ffmpeg nginx_rtmp azcli ubuntu"
 		install_ffmpeg_service $rtmp_path
 		install_nginx_rtmp_service $azure_hostname
-#		install_azcopy_service $storage_account_prefix  $storage_sas_token
+		install_rtsp_service
 		install_azcli_service $storage_account  $storage_container   $storage_sas_token
 	    log "Start nginx_rtmp service"
 	    /usr/local/nginx/sbin/nginx -s stop
@@ -886,7 +963,7 @@ else
 	    log "install ffmpeg nginx_rtmp azcli debian"
 		install_ffmpeg_service $rtmp_path
 		install_nginx_rtmp_service $azure_hostname
-#		install_azcopy_service $storage_account_prefix  $storage_sas_token
+		install_rtsp_service
 		install_azcli_service $storage_account  $storage_container   $storage_sas_token
 	    log "Start nginx_rtmp service"
 	    /usr/local/nginx/sbin/nginx -s stop
@@ -899,9 +976,12 @@ else
     log "Start nginx rtmp service"
     systemctl enable nginxrtmploop.service
     systemctl start nginxrtmploop.service
-#	log "Start azcopy service"
-#	systemctl enable azcopyloop.service
-#	systemctl start azcopyloop.service 
+    log "Start rtsp service"
+    systemctl enable rtsploop.service
+    systemctl start rtsploop.service
+    log "Start ffmpegrtsp service"
+    systemctl enable ffmpegrtsploop.service
+    systemctl start ffmpegrtsploop.service
 	log "Start azcli service"
 	systemctl enable azcliloop.service
 	systemctl start azcliloop.service 
