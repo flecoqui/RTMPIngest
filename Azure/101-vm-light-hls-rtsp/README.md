@@ -1,4 +1,4 @@
-# Deployment of a RTMP Ingester hosted on Azure Virtual Machine using NGINX RTMP and FFMPEG with HLS Playback
+# Deployment of a RTMP Ingester hosted on Azure Virtual Machine using NGINX RTMP, RTSP-SIMPLE-SERVER and FFMPEG with HLS, RTMP and RTSP Playback
 
 <a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fflecoqui%2FRTMPIngest%2Fmaster%2FAzure%2F101-vm-light-hls-rtsp%2Fazuredeploy.json" target="_blank">
     <img src="http://azuredeploy.net/deploybutton.png"/>

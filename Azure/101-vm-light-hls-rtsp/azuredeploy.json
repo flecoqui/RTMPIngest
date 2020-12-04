@@ -315,6 +315,48 @@
               "priority": 104,
               "direction": "Inbound"
             }
+          },
+          {
+            "name": "rtsp",
+            "properties": {
+              "description": "rtsp server port",
+              "protocol": "Tcp",
+              "sourcePortRange": "*",
+              "destinationPortRange": "8554",
+              "sourceAddressPrefix": "Internet",
+              "destinationAddressPrefix": "*",
+              "access": "Allow",
+              "priority": 105,
+              "direction": "Inbound"
+            }
+          },
+          {
+            "name": "rtspudp1",
+            "properties": {
+              "description": "rtsp server udp port",
+              "protocol": "Udp",
+              "sourcePortRange": "*",
+              "destinationPortRange": "8554",
+              "sourceAddressPrefix": "Internet",
+              "destinationAddressPrefix": "*",
+              "access": "Allow",
+              "priority": 106,
+              "direction": "Inbound"
+            }
+          },
+          {
+            "name": "rtspudp2",
+            "properties": {
+              "description": "rtsp server udp port 2",
+              "protocol": "Udp",
+              "sourcePortRange": "*",
+              "destinationPortRange": "7001",
+              "sourceAddressPrefix": "Internet",
+              "destinationAddressPrefix": "*",
+              "access": "Allow",
+              "priority": 107,
+              "direction": "Inbound"
+            }
           }
         ]
       }
