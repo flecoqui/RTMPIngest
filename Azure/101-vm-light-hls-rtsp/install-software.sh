@@ -124,9 +124,10 @@ log "nginx_rtmp installed"
 }
 #############################################################################
 install_rtsp(){
+cd /git
 wget https://github.com/aler9/rtsp-simple-server/releases/download/v0.12.2/rtsp-simple-server_v0.12.2_linux_amd64.tar.gz
 tar xvfz rtsp-simple-server_v0.12.2_linux_amd64.tar.gz
-sudo cp ./rtsp-simple-server* /usr/bin/
+cp ./rtsp-simple-server* /usr/bin/
 log "rtsp-simple-server installed"
 }
 
